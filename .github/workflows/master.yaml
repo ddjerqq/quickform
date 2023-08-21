@@ -1,0 +1,27 @@
+﻿# .github/workflows/master.yaml
+
+name: Release to NuGet
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Pack nuget package
+        run: dotnet pack -c Release --no-build --output .
+
+      - name: Push to NuGet
+        run: dotnet nuget push "*.nupkg" --api-key ${{secrets.NUGET_APIKEY}} --source https://api.nuget.org/v3/index.json
