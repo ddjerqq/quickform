@@ -65,7 +65,7 @@ public class LoginCommand
 }
 ```
 
-![BasicForm.png](./assets/BasicForm.razor.png)
+![BasicForm.png](https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/BasicForm.razor.png)
 
 ---
 
@@ -105,9 +105,9 @@ public class LoginCommand
 }
 ```
 
-![CustomizedBasicForm_before_validation.png](./assets/CustomizedBasicForm.razor_before_validation.png)
+![CustomizedBasicForm_before_validation.png](https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/CustomizedBasicForm.razor_before_validation.png)
 
-![CustomizedBasicForm_after_validation.png](./assets/CustomizedBasicForm.razor_after_validation.png)
+![CustomizedBasicForm_after_validation.png](https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/CustomizedBasicForm.razor_after_validation.png)
 
 ---
 
@@ -126,7 +126,7 @@ public class LoginCommand
 | `[DataType]`    | Specifies the DataType of the field. See supported DataTypes below.                                 | Adds the appropriate value as the type attribute of the input field                                                                  |
 | `[Range]`       | Specifies the range of values for a numeric field.                                                  | Adds the appropriate value as the min and max attributes of the input field, and transforms this input into a bootstrap Slider Range |
 
-### Supported DataType and their appropriate html are:
+### Supported DataTypes and their appropriate html type attributes:
 
 * `DataType.Date` => `"date"`
 * `DataType.Time` => `"time"`
@@ -150,6 +150,4 @@ Thank you for using QuickForm!
 
 Thank you Anton from [Raw Coding](https://www.youtube.com/@RawCoding) for inspiration about expressions.
 
-Thank you [meziantou](https://github.com/meziantou)
-for [this amazing article](https://www.meziantou.net/automatically-generate-a-form-from-an-object-in-blazor.htm) which
-inspired to me create this repo.
+Thank you [meziantou](https://github.com/meziantou) for [this amazing article](https://www.meziantou.net/automatically-generate-a-form-from-an-object-in-blazor.htm) which inspired to me create this repo.
