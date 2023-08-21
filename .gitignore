@@ -1,0 +1,5 @@
+﻿/.idea/*
+*.props
+*.cache
+src/QuickForm/bin/*
+src/QuickForm/obj/*
