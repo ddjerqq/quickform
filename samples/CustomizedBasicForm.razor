@@ -1,0 +1,26 @@
+﻿@using QuickForm.Attributes
+@using QuickForm.Components
+
+<QuickForm Model="Model" />
+
+@code {
+
+    public LoginCommand Model { get; set; } = new LoginCommand();
+
+    public class LoginCommand
+    {
+        [Required]
+        [Placeholder]
+        [DisplayName("Email Address")]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [Placeholder("Enter password...")]
+        [DataType(DataType.Password)]
+        [Description("Password must have at least 8 characters, one uppercase letter, one lowercase letter ...")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z]).{8,32}$", ErrorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter ...")]
+        public string Password { get; set; }
+    }
+
+}

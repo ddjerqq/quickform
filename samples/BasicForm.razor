@@ -1,0 +1,16 @@
+﻿@using QuickForm.Components
+
+<QuickForm Model="Model" />
+
+@code {
+
+    public LoginCommand Model { get; set; } = new LoginCommand();
+
+    public class LoginCommand
+    {
+        public string Email { get; set; }
+
+        public string Password { get; set; }
+    }
+
+}

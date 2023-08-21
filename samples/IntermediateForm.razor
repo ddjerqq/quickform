@@ -1,0 +1,57 @@
+﻿@using QuickForm.Attributes
+@using QuickForm.Components
+@using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
+
+@page "/"
+
+<QuickForm Model="Model" OnValidSubmit="OnValidSubmit" FormClass="p-3 g-3 my-3 border border-1 rounded-3 border-info" />
+
+@code
+{
+    public class Example
+    {
+        [Required]
+        [DisplayName("What is your first name?")]
+        [Placeholder]
+        [RegularExpression(@"[a-z]{3,10}", ErrorMessage = "First Name  must be between 3 and 10 characters long")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [DisplayName("What is your last name?")]
+        [Placeholder]
+        [RegularExpression(@"[a-z]{3,10}", ErrorMessage = "Last Name must be between 3 and 10 characters long")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required]
+        [DisplayName("what is your email address")]
+        [Placeholder]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [Description("Password must be between 8 and 20 characters long")]
+        [RegularExpression(@"[a-zA-Z0-9]{8,20}", ErrorMessage = "Password must be between 8 and 20 characters long")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [DataType(DataType.Date)]
+        public DateTime BirthDate { get; set; } = DateTime.UtcNow;
+
+        [DisplayName("What time do you usually wake up at?")]
+        [DataType(DataType.Time)]
+        public DateTime? Time { get; set; }
+
+        [Required]
+        [DisplayName("How old are you?")]
+        [Range(1, 100)]
+        public int Age { get; set; }
+    }
+
+    public Example Model { get; set; } = new();
+
+    private void OnValidSubmit()
+    {
+        Console.WriteLine("valid submit called");
+    }
+}
