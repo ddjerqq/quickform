@@ -8,7 +8,8 @@ namespace QuickForm.Components;
 /// A generic component that displays a form for editing / creating a model.
 /// </summary>
 /// <typeparam name="TEntity">The type of the model to be edited / created by this form.</typeparam>
-public partial class QuickForm<TEntity>
+public partial class QuickForm<TEntity> : ComponentBase, IDisposable
+    where TEntity : class, new()
 {
     /// <summary>
     /// Gets or sets the model to be edited / created by this form.
@@ -46,7 +47,7 @@ public partial class QuickForm<TEntity>
     public void Dispose()
     {
         GC.SuppressFinalize(this);
-        this.Fields.ForEach(f => f.ValueChanged -= this.OnValueChanged);
+        Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
     }
 
     /// <inheritdoc />
@@ -54,21 +55,21 @@ public partial class QuickForm<TEntity>
     {
         base.OnParametersSet();
 
-        this.EditContext = BootstrapFormCssProvider.CreateEditContextFor(this.Model);
+        EditContext = BootstrapFormCssProvider.CreateEditContextFor(Model);
 
-        this.Fields.ForEach(f => f.ValueChanged -= this.OnValueChanged);
-        this.Fields = QuickFormField<TEntity>.FromForm(this).ToList();
-        this.Fields.ForEach(f => f.ValueChanged += this.OnValueChanged);
+        Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
+        Fields = QuickFormField<TEntity>.FromForm(this).ToList();
+        Fields.ForEach(f => f.ValueChanged += OnValueChanged);
     }
 
     private void OnValueChanged(object? sender, EventArgs e)
     {
-        this.InvokeAsync(() => this.OnModelChanged.InvokeAsync(this.Model));
+        InvokeAsync(() => OnModelChanged.InvokeAsync(Model));
     }
 
     private void OnReset()
     {
-        this.EditContext = BootstrapFormCssProvider.CreateEditContextFor(this.Model);
-        this.StateHasChanged();
+        EditContext = BootstrapFormCssProvider.CreateEditContextFor(Model);
+        StateHasChanged();
     }
 }

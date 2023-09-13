@@ -7,38 +7,39 @@ using QuickForm.Common;
 namespace QuickForm.Components;
 
 internal sealed class QuickFormField<TEntity>
+    where TEntity : class, new()
 {
     // the parent form
-    private readonly QuickForm<TEntity> form;
+    private readonly QuickForm<TEntity> _form;
 
-    private RenderFragment? inputComponentTemplate;
-    private RenderFragment? fieldValidationTemplate;
+    private RenderFragment? _inputComponentTemplate;
+    private RenderFragment? _fieldValidationTemplate;
 
     private QuickFormField(QuickForm<TEntity> form, PropertyInfo propertyInfo)
     {
-        this.form = form;
-        this.PropertyInfo = propertyInfo;
+        _form = form;
+        PropertyInfo = propertyInfo;
     }
 
     public event EventHandler? ValueChanged;
 
-    public string EditorId => this.form.BaseEditorId + '_' + this.PropertyInfo.Name;
+    public string EditorId => _form.BaseEditorId + '_' + PropertyInfo.Name;
 
     public PropertyInfo PropertyInfo { get; }
 
-    public Type PropertyType => this.PropertyInfo.PropertyType;
+    public Type PropertyType => PropertyInfo.PropertyType;
 
-    public TEntity Owner => this.form.Model;
+    public TEntity Owner => _form.Model;
 
     public object? Value
     {
-        get => this.PropertyInfo.GetValue(this.Owner);
+        get => PropertyInfo.GetValue(Owner);
         set
         {
-            if (this.PropertyInfo.SetMethod is not null && !Equals(this.Value, value))
+            if (PropertyInfo.SetMethod is not null && !Equals(Value, value))
             {
-                this.PropertyInfo.SetValue(this.Owner, value);
-                this.ValueChanged?.Invoke(this, EventArgs.Empty);
+                PropertyInfo.SetValue(Owner, value);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -47,12 +48,12 @@ internal sealed class QuickFormField<TEntity>
     {
         get
         {
-            return this.inputComponentTemplate ??= builder =>
+            return _inputComponentTemplate ??= builder =>
             {
-                var inputComponentType = this.PropertyInfo.GetInputComponentType();
+                var inputComponentType = PropertyInfo.GetInputComponentType();
 
                 builder.OpenComponent(0, inputComponentType);
-                builder.AddMultipleAttributes(1, this.InputComponentAttributes);
+                builder.AddMultipleAttributes(1, InputComponentAttributes);
                 builder.CloseComponent();
             };
         }
@@ -62,11 +63,11 @@ internal sealed class QuickFormField<TEntity>
     {
         get
         {
-            return this.fieldValidationTemplate ??= builder =>
+            return _fieldValidationTemplate ??= builder =>
             {
                 var expressionContainer = ValidationMessageExpressionContainer.Create(this);
 
-                builder.OpenComponent(0, typeof(ValidationMessage<>).MakeGenericType(this.PropertyType));
+                builder.OpenComponent(0, typeof(ValidationMessage<>).MakeGenericType(PropertyType));
                 builder.AddAttribute(1, "For", expressionContainer.Lambda);
                 builder.CloseComponent();
             };
@@ -81,14 +82,14 @@ internal sealed class QuickFormField<TEntity>
 
             var attributes = new Dictionary<string, object?>
             {
-                { "id", this.EditorId },
-                { "Value", this.Value },
+                { "id", EditorId },
+                { "Value", Value },
                 { "ValueExpression", expressionContainer.ValueExpression },
                 { "autofocus", true },
-                { "required", this.PropertyInfo.IsRequired() },
+                { "required", PropertyInfo.IsRequired() },
             };
 
-            if (this.PropertyInfo.IsEditable())
+            if (PropertyInfo.IsEditable())
             {
                 attributes["ValueChanged"] = expressionContainer.ValueChanged;
             }
@@ -98,28 +99,28 @@ internal sealed class QuickFormField<TEntity>
                 attributes["readonly"] = "true";
             }
 
-            if (!string.IsNullOrEmpty(this.PropertyInfo.DataListName()))
+            if (!string.IsNullOrEmpty(PropertyInfo.DataListName()))
             {
-                attributes["list"] = this.PropertyInfo.DataListName();
+                attributes["list"] = PropertyInfo.DataListName();
             }
 
-            if (!string.IsNullOrEmpty(this.PropertyInfo.Placeholder()))
+            if (!string.IsNullOrEmpty(PropertyInfo.Placeholder()))
             {
-                attributes["placeholder"] = this.PropertyInfo.Placeholder();
+                attributes["placeholder"] = PropertyInfo.Placeholder();
             }
 
-            if (this.PropertyInfo.IsCheckbox())
+            if (PropertyInfo.IsCheckbox())
             {
                 attributes["class"] = "form-check-input";
                 attributes["role"] = "switch";
             }
-            else if (this.PropertyInfo.RangeAttribute() is not null)
+            else if (PropertyInfo.RangeAttribute() is not null)
             {
                 attributes["class"] = "form-range";
 
-                if (this.PropertyType == typeof(short)
-                    || this.PropertyType == typeof(int)
-                    || this.PropertyType == typeof(long))
+                if (PropertyType == typeof(short)
+                    || PropertyType == typeof(int)
+                    || PropertyType == typeof(long))
                 {
                     attributes["step"] = "1";
                 }
@@ -128,17 +129,17 @@ internal sealed class QuickFormField<TEntity>
                     attributes["step"] = "0.1";
                 }
 
-                attributes["min"] = this.PropertyInfo.RangeAttribute()!.Minimum;
-                attributes["max"] = this.PropertyInfo.RangeAttribute()!.Maximum;
+                attributes["min"] = PropertyInfo.RangeAttribute()!.Minimum;
+                attributes["max"] = PropertyInfo.RangeAttribute()!.Maximum;
             }
             else
             {
                 attributes["class"] = "form-control";
             }
 
-            if (!string.IsNullOrEmpty(this.PropertyInfo.GetHtmlInputType()))
+            if (!string.IsNullOrEmpty(PropertyInfo.GetHtmlInputType()))
             {
-                attributes["type"] = this.PropertyInfo.GetHtmlInputType();
+                attributes["type"] = PropertyInfo.GetHtmlInputType();
             }
 
             return attributes!;

@@ -16,14 +16,14 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
     {
         var onchange = EventCallback.Factory.CreateBinder<string>(
             this,
-            value => this.CurrentValueAsString = value,
-            this.CurrentValueAsString!,
+            value => CurrentValueAsString = value,
+            CurrentValueAsString!,
             culture: null);
 
         builder.OpenElement(0, "select");
-        builder.AddMultipleAttributes(1, this.AdditionalAttributes);
-        builder.AddAttribute(2, "class", this.CssClass);
-        builder.AddAttribute(3, "value", BindConverter.FormatValue(this.CurrentValueAsString));
+        builder.AddMultipleAttributes(1, AdditionalAttributes);
+        builder.AddAttribute(2, "class", CssClass);
+        builder.AddAttribute(3, "value", BindConverter.FormatValue(CurrentValueAsString));
         builder.AddAttribute(4, "onchange", onchange);
 
         // Add an option element per enum value
@@ -65,7 +65,7 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
 
         // The value is invalid => set the error message
         result = default!;
-        validationErrorMessage = $"The {this.FieldIdentifier.FieldName} field is not valid.";
+        validationErrorMessage = $"The {FieldIdentifier.FieldName} field is not valid.";
         return false;
     }
 

@@ -32,6 +32,7 @@ internal record InputComponentExpressionContainer(LambdaExpression ValueExpressi
     }
 
     public static InputComponentExpressionContainer Create<TEntity>(QuickFormField<TEntity> formField)
+        where TEntity : class, new()
     {
         // () => Owner.Property
         var access = Expression.Property(
