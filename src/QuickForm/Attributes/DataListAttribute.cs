@@ -11,7 +11,7 @@ public class DataListAttribute : Attribute
     /// Initializes a new instance of the <see cref="DataListAttribute"/> class.
     /// </summary>
     /// <param name="dataListName">The name of the datalist.</param>
-    public DataListAttribute(string dataListName) => this.DataListName = dataListName;
+    public DataListAttribute(string dataListName) => DataListName = dataListName;
 
     /// <summary>
     /// Gets the name of the datalist.

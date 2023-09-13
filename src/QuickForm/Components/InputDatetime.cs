@@ -16,14 +16,14 @@ internal class InputDateTime<TValue> : InputDate<TValue>
     {
         var onchange = EventCallback.Factory.CreateBinder<string>(
             this,
-            value => this.CurrentValueAsString = value,
-            this.CurrentValueAsString!);
+            value => CurrentValueAsString = value,
+            CurrentValueAsString!);
 
         builder.OpenElement(0, "input");
-        builder.AddMultipleAttributes(1, this.AdditionalAttributes);
+        builder.AddMultipleAttributes(1, AdditionalAttributes);
         builder.AddAttribute(2, "type", "datetime-local");
-        builder.AddAttribute(3, "class", this.CssClass);
-        builder.AddAttribute(4, "value", BindConverter.FormatValue(this.CurrentValueAsString));
+        builder.AddAttribute(3, "class", CssClass);
+        builder.AddAttribute(4, "value", BindConverter.FormatValue(CurrentValueAsString));
         builder.AddAttribute(5, "onchange", onchange);
         builder.CloseElement();
     }
@@ -80,8 +80,8 @@ internal class InputDateTime<TValue> : InputDate<TValue>
 
         validationErrorMessage = string.Format(
             CultureInfo.CurrentCulture,
-            this.ParsingErrorMessage,
-            this.FieldIdentifier.FieldName);
+            ParsingErrorMessage,
+            FieldIdentifier.FieldName);
 
         return false;
     }

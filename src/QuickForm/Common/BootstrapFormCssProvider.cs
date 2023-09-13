@@ -14,13 +14,12 @@ internal sealed class BootstrapFormCssProvider : FieldCssClassProvider
     /// Gets or sets a value indicating whether validation has been requested.
     /// This is required to stop the form from showing validation errors before the user has interacted with the form.
     /// </summary>
-    // TODO: check if we can access these properties from outside the assembly
     public bool ValidationRequested { get; set; }
 
     /// <inheritdoc />
     public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
     {
-        if (!editContext.IsModified(fieldIdentifier) && !this.ValidationRequested)
+        if (!editContext.IsModified(fieldIdentifier) && !ValidationRequested)
             return string.Empty;
 
         var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
