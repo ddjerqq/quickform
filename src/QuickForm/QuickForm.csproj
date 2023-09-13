@@ -37,11 +37,7 @@
 
     <ItemGroup>
         <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\"/>
-
-        <None Include="..\..\assets\quickform-icon.png">
-            <Pack>True</Pack>
-            <Link>quickform-icon.png</Link>
-        </None>
+        <None Include="$(SolutionDir)assets\quickform-icon.png" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>
