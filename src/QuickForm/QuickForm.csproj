@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -18,7 +18,7 @@
         <PackageTags>aspnetcore, components, blazor, forms</PackageTags>
         <PackageIcon>quickform-icon.png</PackageIcon>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -38,6 +38,10 @@
     <ItemGroup>
         <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\"/>
         <None Include="$(SolutionDir)assets\quickform-icon.png" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Common\BootstrapFormCssProvider.cs" />
     </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@
 /// For autocompletion functionality.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class DataListAttribute : Attribute
+public sealed class DataListAttribute : Attribute
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DataListAttribute"/> class.

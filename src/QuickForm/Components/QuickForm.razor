@@ -2,73 +2,72 @@
 @using Blazored.FluentValidation
 @using QuickForm.Common
 
-@typeparam TEntity
-@implements IDisposable
+@typeparam TEntity where TEntity : class, new()
 
-<EditForm EditContext="EditContext" OnValidSubmit="OnValidSubmit" class="@FormClass">
+<EditForm EditContext="EditContext"
+          OnSubmit="@OnSubmit" OnInvalidSubmit="@OnInvalidSubmit" OnValidSubmit="@OnValidSubmit"
+          class="@FormClass"
+          novalidate
+          @attributes="@AdditionalAttributes">
+
     <DataAnnotationsValidator/>
     <FluentValidationValidator/>
 
-    <div class="form-text mb-3">
-        Fields marked with <strong class="text-danger fw-bold fs-5">*</strong> are required
-    </div>
-
     @foreach (var field in Fields)
     {
-        var editorClass = "mb-1 mb-md-3 text-start" + (field.PropertyInfo.IsCheckbox() ? " form-check form-switch" : string.Empty);
-        var labelClass = "fw-bold text-info" + (field.PropertyInfo.IsCheckbox() ? " form-check-label" : " form-label");
-
-        <div class="@editorClass">
-            @if (field.PropertyInfo.IsCheckbox())
-            {
-                @field.InputComponentTemplate
-            }
-
-            <label for="@field.EditorId" class="@labelClass">
+        <div class="@(field.PropertyInfo.EditorClass() ?? CssClassProvider?.Editor)">
+            <label for="@field.EditorId" class="@(field.PropertyInfo.LabelClass() ?? CssClassProvider?.Label)">
                 @field.PropertyInfo.DisplayName()
-                @if (field.PropertyInfo.IsRequired())
-                {
-                    <span class="text-danger fw-bold fs-5">*</span>
-                }
             </label>
 
-            @if (!field.PropertyInfo.IsCheckbox())
+            @if (InputTemplate is not null)
+            {
+                @InputTemplate(field.InputComponentTemplate)
+            }
+            else
             {
                 @field.InputComponentTemplate
             }
 
-            @if (!string.IsNullOrEmpty(field.PropertyInfo.Description()))
+            @if (field.PropertyInfo.Description() is var descriptionText && !string.IsNullOrEmpty(descriptionText))
             {
-                <div class="form-text text-muted">
-                    @field.PropertyInfo.Description()
-                </div>
+                if (DescriptionTemplate is not null)
+                {
+                    @DescriptionTemplate(descriptionText)
+                }
+                else
+                {
+                    @descriptionText
+                }
             }
 
-            <div class="invalid-feedback fw-bold">
+            @* TODO only show these where they are needed *@
+            @if (field.PropertyInfo.ValidFeedbackText() is var validFeedbackText && !string.IsNullOrEmpty(validFeedbackText))
+            {
+                if (ValidFeedbackTemplate is not null)
+                {
+                    @ValidFeedbackTemplate(validFeedbackText)
+                }
+                else
+                {
+                    @validFeedbackText
+                }
+            }
+
+            @* TODO check if field is readonly or not editable  *@
+            @if (InValidFeedbackTemplate is not null)
+            {
+                @InValidFeedbackTemplate(field.ValidationMessage)
+            }
+            else
+            {
                 @field.ValidationMessage
-            </div>
+            }
         </div>
     }
 
-    <div class="mb-1 d-flex">
-        <button type="submit" class="btn btn-outline-success col-6 col-md-5 me-1 me-md-0">
-            submit
-        </button>
-
-        <i class="mx-auto"></i>
-
-        <button type="reset" class="btn btn-outline-danger col-6 col-md-5" @onclick="OnReset">
-            reset
-        </button>
-    </div>
+    @if (SubmitButtonTemplate is not null)
+    {
+        @SubmitButtonTemplate
+    }
 </EditForm>
-
-<script>
-// this fixes the issue with the range input not being rendered correctly
-// because InputNumber<T> is strictly typed to "number",
-// we need to change it to "range" manually using JS :( ew.
-document.addEventListener("DOMContentLoaded", () => setTimeout(() => {
-        const elements = document.querySelectorAll(".form-range");
-        elements.forEach(el => el.setAttribute("type", "range"));
-    }, 500));
-</script>
