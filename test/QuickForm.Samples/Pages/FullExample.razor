@@ -90,29 +90,61 @@
         [Range(0, 10)]
         public decimal DecimalRangeFromOneToTen { get; set; } = 5m;
 
+        public bool BoolField { get; set; }
+
+        public short ShortField { get; set; }
+
+        public int IntField { get; set; }
+
+        public long LongField { get; set; }
+
+        public float FloatField { get; set; }
+
+        public double DoubleField { get; set; }
+
+        public decimal DecimalField { get; set; }
+
+        public short? NullableShortField { get; set; }
+
+        public int? NullableIntField { get; set; }
+
+        public long? NullableLongField { get; set; }
+
+        public float? NullableFloatField { get; set; }
+
+        public double? NullableDoubleField { get; set; }
+
+        public decimal? NullableDecimalField { get; set; }
+
         public DateTime SimpleDateTime { get; set; }
 
-        [DataType(DataType.DateTime)]
-        public DateTime DateAndTime { get; set; }
+        public DateOnly SimpleDateOnly { get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime DateOnly { get; set; }
+        public TimeOnly SimpleTimeOnly { get; set; }
 
-        [Range(typeof(string), "2023-01-01", "2023-12-01")]
-        [DataType(DataType.Date)]
+        public DateTimeOffset SimpleDateTimeOffset { get; set; }
+
+        [DateType(InputDateType.DateTimeLocal)]
+        public DateTime DateAndTimeLocal { get; set; }
+
+        [DateType(InputDateType.Date)]
+        public DateTime DateOnlyOnDateTime { get; set; }
+
+        [DateType(InputDateType.Month)]
+        public DateOnly MonthOnDateOnly { get; set; }
+
+        [DateType(InputDateType.Month)]
+        public DateTime MonthOnDateTime { get; set; }
+
+        [Range(typeof(string), "2023-12-01", "2023-12-31")]
+        [DateType(InputDateType.Date)]
         public DateTime ConstrainedDateOnly { get; set; }
 
         [DataList("dates")]
-        [DataType(DataType.Date)]
-        public DateTime ConstrainedDateOnlyWithDataList { get; set; }
+        [DateType(InputDateType.Date)]
+        public DateTime ConstrainedDateTimeWithDataListChoices { get; set; }
 
-        [DataType(DataType.Time)]
-        // TODO give warning, tell user to use string.
-        public DateTime TimeOnly { get; set; }
-
-        public DateOnly DateOnlyField { get; set; }
-
-        public TimeOnly TimeOnlyField { get; set; }
+        public DateTime? NullableDateTime { get; set; }
 
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = string.Empty;
@@ -129,14 +161,13 @@
         [DataType(DataType.ImageUrl)]
         public string ImageUrl { get; set; } = string.Empty;
 
-        // DataType.MultilineText => null
         [DataType(DataType.MultilineText)]
         public string LongText { get; set; } = string.Empty;
     }
 
     private void OnValidSubmit(EditContext editContext)
     {
-    // reset the value or something here.
+        // reset the value or something here.
         Console.WriteLine("Form submitted");
     }
 

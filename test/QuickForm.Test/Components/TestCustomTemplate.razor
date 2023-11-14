@@ -1,0 +1,33 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        // TODO test
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form novalidate>
+                    @* TODO *@
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+}

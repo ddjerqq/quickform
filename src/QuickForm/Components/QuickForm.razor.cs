@@ -138,7 +138,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
 
     /// <summary>
     /// Gets or sets the <see cref="ValidationCssClassProvider"/> that is used to determine the CSS class,
-    /// for valid and invalid fields. by default this is <see cref="Microsoft.AspNetCore.Components.Forms.FieldCssClassProvider.Instance"/>.
+    /// for valid and invalid fields.
     /// </summary>
     [Parameter]
     public FieldCssClassProvider ValidationCssClassProvider { get; set; } = new();

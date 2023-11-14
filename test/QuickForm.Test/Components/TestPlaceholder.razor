@@ -1,0 +1,45 @@
+﻿@using QuickForm.Attributes
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [Placeholder]
+        public string A { get; set; } = default!;
+
+        [Placeholder("B Placeholder")]
+        public string B { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form novalidate blazor:onsubmit="1">
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" placeholder:ignoreCase="enter a..." autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" placeholder:ignoreCase="b placeholder" autofocus class="valid"/>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+}

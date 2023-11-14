@@ -1,0 +1,93 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [DataType(DataType.Date)]
+        public string A { get; set; } = default!;
+
+        [DataType(DataType.Time)]
+        public string B { get; set; } = default!;
+
+        [DataType(DataType.DateTime)]
+        public string C { get; set; } = default!;
+
+        [DataType(DataType.EmailAddress)]
+        public string D { get; set; } = default!;
+
+        [DataType(DataType.Password)]
+        public string E { get; set; } = default!;
+
+        [DataType(DataType.PhoneNumber)]
+        public string F { get; set; } = default!;
+
+        [DataType(DataType.Url)]
+        public string G { get; set; } = default!;
+
+        [DataType(DataType.MultilineText)]
+        public string H { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form novalidate>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="date" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="time" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="datetime-local" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="email" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="password" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="tel"  autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="url"  autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <textarea id:ignoreCase:regex="@IdRegex" autofocus class="valid"></textarea>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+}

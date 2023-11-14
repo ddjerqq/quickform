@@ -106,30 +106,42 @@ internal static class PropertyInfoExtensions
     private static readonly Dictionary<Func<Type, DataType?, bool>, Type> InputTypes = new()
     {
         { (t, _) => t == typeof(bool), typeof(InputCheckbox) },
+
         { (t, _) => t == typeof(short), typeof(InputNumber<short>) },
         { (t, _) => t == typeof(int), typeof(InputNumber<int>) },
         { (t, _) => t == typeof(long), typeof(InputNumber<long>) },
         { (t, _) => t == typeof(float), typeof(InputNumber<float>) },
         { (t, _) => t == typeof(double), typeof(InputNumber<double>) },
         { (t, _) => t == typeof(decimal), typeof(InputNumber<decimal>) },
+
+        { (t, _) => t == typeof(short?), typeof(InputNumber<short?>) },
+        { (t, _) => t == typeof(int?), typeof(InputNumber<int?>) },
+        { (t, _) => t == typeof(long?), typeof(InputNumber<long?>) },
+        { (t, _) => t == typeof(float?), typeof(InputNumber<float?>) },
+        { (t, _) => t == typeof(double?), typeof(InputNumber<double?>) },
+        { (t, _) => t == typeof(decimal?), typeof(InputNumber<decimal?>) },
+
         { (t, dt) => t == typeof(string) && dt is DataType.MultilineText, typeof(InputTextArea) },
         { (t, _) => t == typeof(string), typeof(InputText) },
-        { (t, dt) => t == typeof(DateTime) && dt is DataType.Date, typeof(InputDate<DateTime>) },
-        { (t, dt) => t == typeof(DateTime?) && dt is DataType.Date, typeof(InputDate<DateTime?>) },
 
-        // TODO support for DateOnly and TimeOnly through InputText
-        { (t, dt) => t == typeof(DateTime) && dt is DataType.Time, typeof(InputText) },
-        { (t, dt) => t == typeof(DateTime?) && dt is DataType.Time, typeof(InputText) },
-        { (t, _) => t == typeof(DateTime), typeof(InputDateTime<DateTime>) },
-        { (t, _) => t == typeof(DateTime?), typeof(InputDateTime<DateTime?>) },
-        { (t, _) => t == typeof(DateOnly), typeof(InputText) },
-        { (t, _) => t == typeof(DateOnly?), typeof(InputText) },
+        { (t, _) => t == typeof(DateTime), typeof(InputDate<DateTime>) },
+        { (t, _) => t == typeof(DateTimeOffset), typeof(InputDate<DateTimeOffset>) },
+        { (t, _) => t == typeof(DateOnly), typeof(InputDate<DateOnly>) },
+        { (t, _) => t == typeof(TimeOnly), typeof(InputDate<TimeOnly>) },
+
+        { (t, _) => t == typeof(DateTime?), typeof(InputDate<DateTime?>) },
+        { (t, _) => t == typeof(DateTimeOffset?), typeof(InputDate<DateTimeOffset?>) },
+        { (t, _) => t == typeof(DateOnly?), typeof(InputDate<DateOnly?>) },
+        { (t, _) => t == typeof(TimeOnly?), typeof(InputDate<TimeOnly?>) },
     };
 
     internal static Type GetInputComponentType(this PropertyInfo prop)
     {
         var type = prop.PropertyType;
         var dType = prop.GetCustomAttribute<DataTypeAttribute>();
+
+        if (type == typeof(bool?))
+            throw new InvalidOperationException("Nullable bools are not supported, Please just use a regular bool field.");
 
         foreach (var (predicate, componentType) in InputTypes)
             if (predicate(type, dType?.DataType))
@@ -141,43 +153,69 @@ internal static class PropertyInfoExtensions
         return typeof(InputText);
     }
 
-    // TODO support for explicit input type
-    internal static string? GetHtmlInputType(this PropertyInfo prop)
+    // TODO god this needs refactoring
+    internal static object? GetHtmlInputType(this PropertyInfo prop)
     {
-        var type = prop.PropertyType;
-        var dType = prop.GetCustomAttribute<DataTypeAttribute>();
+        var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+        var dataTypeAttribute = prop.GetCustomAttribute<DataTypeAttribute>();
 
         if (type == typeof(bool))
             return "checkbox";
 
         if (type == typeof(string))
-            return dType?.DataType switch
+        {
+            if (dataTypeAttribute?.DataType is DataType.Date or DataType.Time or DataType.DateTime)
             {
-                DataType.Date => "date",
-                DataType.Time => "time",
-                DataType.DateTime => "datetime-local",
+                // var logger = LoggerFactory.Create(_ => { }).CreateLogger(type);
+                //
+                // // TODO test if this even logs anything
+                // logger.LogWarning(
+                //     "Do not use Date, Time, or DateTime DataType attributes on string properties. " +
+                //     "Instead use DateTime type and DateTypeAttribute to specify the type of the date you want to use." +
+                //     "Class: {PropClass}, Property: {PropName}",
+                //     prop.DeclaringType?.FullName,
+                //     prop.Name);
+
+                return dataTypeAttribute.DataType switch
+                {
+                    DataType.Date => "date",
+                    DataType.Time => "time",
+                    DataType.DateTime => "datetime-local",
+                    _ => null,
+                };
+            }
+
+            return dataTypeAttribute?.DataType switch
+            {
                 DataType.EmailAddress => "email",
                 DataType.Password => "password",
                 DataType.PhoneNumber => "tel",
                 DataType.Url or DataType.ImageUrl => "url",
-                DataType.MultilineText => null,
-                _ => null
+                _ => null,
             };
+        }
 
-        if (type == typeof(DateTime) || type == typeof(DateTime?))
-            return dType?.DataType switch
-            {
-                DataType.Date => "date",
-                DataType.Time => "time",
-                DataType.DateTime => "datetime-local",
-                _ => null
-            };
+        if (type == typeof(DateTime)
+            || type == typeof(DateTimeOffset)
+            || type == typeof(DateOnly)
+            || type == typeof(TimeOnly))
+        {
+            var dateTypeAttribute = prop.GetCustomAttribute<DateTypeAttribute>();
+            if (dateTypeAttribute is not null)
+                return dateTypeAttribute.InputDateType;
 
-        // if (type == typeof(DateOnly) || type == typeof(DateOnly?))
-        //     return "date";
-        //
-        // if (type == typeof(TimeOnly) || type == typeof(TimeOnly?))
-        //     return "time";
+            if (type == typeof(DateTime))
+                return InputDateType.DateTimeLocal;
+
+            if (type == typeof(DateTimeOffset))
+                return InputDateType.DateTimeLocal;
+
+            if (type == typeof(DateOnly))
+                return InputDateType.Date;
+
+            if (type == typeof(TimeOnly))
+                return InputDateType.Time;
+        }
 
         return null;
     }

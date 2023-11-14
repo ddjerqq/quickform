@@ -15,8 +15,8 @@
 
     @foreach (var field in Fields)
     {
-        <div class="@(field.PropertyInfo.EditorClass() ?? CssClassProvider?.Editor)">
-            <label for="@field.EditorId" class="@(field.PropertyInfo.LabelClass() ?? CssClassProvider?.Label)">
+        <div class="@(field.PropertyInfo.EditorClass() ?? CssClassProvider?.Editor(field))">
+            <label for="@field.EditorId" class="@(field.PropertyInfo.LabelClass() ?? CssClassProvider?.Label(field))">
                 @field.PropertyInfo.DisplayName()
             </label>
 
@@ -50,6 +50,7 @@
                 }
                 else
                 {
+                    // TODO test if anything is outputted if this is null
                     @validFeedbackText
                 }
             }

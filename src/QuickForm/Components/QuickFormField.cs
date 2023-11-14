@@ -6,13 +6,17 @@ using QuickForm.Common;
 
 namespace QuickForm.Components;
 
-internal class QuickFormField<TEntity>
+internal class QuickFormField<TEntity> : IQuickFormField
     where TEntity : class, new()
 {
     private readonly QuickForm<TEntity> _form;
 
     private RenderFragment? _inputComponentTemplate;
     private RenderFragment? _fieldValidationTemplate;
+
+    public PropertyInfo PropertyInfo { get; }
+
+    internal Type PropertyType => PropertyInfo.PropertyType;
 
     public IDictionary<string, object> InputComponentAttributes
     {
@@ -26,7 +30,7 @@ internal class QuickFormField<TEntity>
                 { "Value", Value },
                 { "autofocus", true },
                 { "required", PropertyInfo.IsRequired() },
-                { "class", PropertyInfo.InputClass() ?? _form.CssClassProvider?.Input },
+                { "class", PropertyInfo.InputClass() ?? _form.CssClassProvider?.Input(this) },
                 { "ValueExpression", expressionContainer.ValueExpression }
             };
 
@@ -50,22 +54,13 @@ internal class QuickFormField<TEntity>
             {
                 attributes["role"] = "switch";
             }
-            else if (PropertyInfo.RangeAttribute() is not null)
+            else if (PropertyInfo.RangeAttribute() is { Minimum: var min, Maximum: var max })
             {
-                // TODO: Support other numeric types
-                if (PropertyType == typeof(short)
-                    || PropertyType == typeof(int)
-                    || PropertyType == typeof(long))
-                    attributes["step"] = "1";
-                else
-                    // TODO make StepAttribute which will specify the step here.
-                    attributes["step"] = "0.1";
-
-                attributes["min"] = PropertyInfo.RangeAttribute()!.Minimum;
-                attributes["max"] = PropertyInfo.RangeAttribute()!.Maximum;
+                attributes["min"] = min;
+                attributes["max"] = max;
             }
 
-            if (PropertyInfo.GetHtmlInputType() is var htmlInputType && !string.IsNullOrEmpty(htmlInputType))
+            if (PropertyInfo.GetHtmlInputType() is { } htmlInputType)
                 attributes["type"] = htmlInputType;
 
             return attributes!;
@@ -81,10 +76,6 @@ internal class QuickFormField<TEntity>
     internal event EventHandler? ValueChanged;
 
     internal string EditorId => _form.BaseEditorId + '_' + PropertyInfo.Name;
-
-    internal PropertyInfo PropertyInfo { get; }
-
-    internal Type PropertyType => PropertyInfo.PropertyType;
 
     internal TEntity? Owner => _form.Model;
 

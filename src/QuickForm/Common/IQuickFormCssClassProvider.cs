@@ -1,4 +1,6 @@
-﻿namespace QuickForm.Common;
+﻿using QuickForm.Components;
+
+namespace QuickForm.Common;
 
 /// <summary>
 /// Provides the base css classes for the quick form.
@@ -8,15 +10,15 @@ public interface IQuickFormClassProvider
     /// <summary>
     /// Gets the base css class for the Input container element.
     /// </summary>
-    public string? Editor { get; }
+    public Func<IQuickFormField, string?> Editor { get; }
 
     /// <summary>
     /// Gets the base css class for the Label element.
     /// </summary>
-    public string? Label { get; }
+    public Func<IQuickFormField, string?> Label { get; }
 
     /// <summary>
     /// Gets the base css class for the Input element.
     /// </summary>
-    public string? Input { get; }
+    public Func<IQuickFormField, string?> Input { get; }
 }

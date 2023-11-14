@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using QuickForm.Common;
 
+// TODO make one for tailwind and place it at the root QuickForm namespace;
+
 namespace QuickForm.Components.Bootstrap;
 
 /// <summary>
@@ -15,10 +17,16 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
     /// </summary>
     protected override void OnParametersSet()
     {
-        CssClassProvider = new CustomQuickFormClassProvider("text-start mb-3", "mb-1 fw-bold text-info", "form-control");
+        CssClassProvider = new CustomQuickFormClassProvider
+        {
+            Editor = field => "text-start mb-3" + (field.PropertyInfo.PropertyType == typeof(bool) ? " form-check" : ""),
+            Label = field => "text-info fw-bold mb-1" + (field.PropertyInfo.PropertyType == typeof(bool) ? "form-check-label" : ""),
+            Input = field => field.PropertyInfo.PropertyType == typeof(bool) ? "form-check-input" : "form-control",
+        };
+
         ValidationCssClassProvider = new CustomFieldCssClassProvider("is-valid", "is-invalid");
 
-        ValidFeedbackTemplate = validFeedback =>
+        ValidFeedbackTemplate ??= validFeedback =>
         {
             return builder =>
             {
@@ -29,7 +37,7 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
             };
         };
 
-        InValidFeedbackTemplate = invalidFeedback =>
+        InValidFeedbackTemplate ??= invalidFeedback =>
         {
             return builder =>
             {
@@ -40,7 +48,7 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
             };
         };
 
-        SubmitButtonTemplate = builder =>
+        SubmitButtonTemplate ??= builder =>
         {
             builder.OpenElement(0, "button");
             builder.AddAttribute(1, "type", "submit");

@@ -1,15 +1,19 @@
-﻿@page "/custom"
+﻿@page "/custom_template"
 
 @using QuickForm.Components
 @using QuickForm.Attributes
 @using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
+@using QuickForm.Common
 
 <PageTitle>Index</PageTitle>
 
 <div class="text"></div>
 
-<QuickForm TEntity="LoginCommand" @ref="@QuickForm" Model="Model" EditContext="EditContext" OnSubmit="@OnSubmit" FormClass="form w-50 mx-auto" novalidate>
+<QuickForm @ref="@QuickForm" TEntity="LoginCommand" Model="Model"
+           FormClass="form w-50 mx-auto"
+           CssClassProvider="CustomQuickFormClassProvider"
+           EditContext="EditContext" OnSubmit="@OnSubmit" novalidate>
     <DescriptionTemplate>
         <div class="fs-6 form-text text-muted">
             @context
@@ -43,20 +47,16 @@
 
     public EditContext EditContext { get; set; } = default!;
 
+    public CustomQuickFormClassProvider CustomQuickFormClassProvider { get; set; } = new("text-start mb-1 mb-md-3", "mb-1 fw-bold text-info", "form-control");
+
     public class LoginCommand
     {
-        [EditorClass("text-start mb-1 mb-md-3")]
-        [LabelClass("mb-1 fw-bold text-info")]
-        [InputClass("form-control")]
         [Description("We will never share your email with anyone else.")]
         [Required(ErrorMessage = "Email is required.")]
         [Placeholder("Enter your email.")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = string.Empty;
 
-        [EditorClass("text-start mb-1 mb-md-3")]
-        [LabelClass("mb-1 fw-bold text-info")]
-        [InputClass("form-control")]
         [Description("Enter your password.")]
         [Required(ErrorMessage = "Password is required.")]
         [Placeholder("Enter your password.")]

@@ -10,10 +10,4 @@
       <ProjectReference Include="..\..\src\QuickForm\QuickForm.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\site.css" />
-    </ItemGroup>
-
 </Project>
