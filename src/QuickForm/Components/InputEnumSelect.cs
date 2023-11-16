@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 namespace QuickForm.Components;
 
 internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
+    where TEnum : Enum
 {
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -20,19 +21,20 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
             CurrentValueAsString!,
             culture: null);
 
-        builder.OpenElement(0, "select");
-        builder.AddMultipleAttributes(1, AdditionalAttributes);
-        builder.AddAttribute(2, "class", CssClass);
-        builder.AddAttribute(3, "value", BindConverter.FormatValue(CurrentValueAsString));
-        builder.AddAttribute(4, "onchange", onchange);
+        int i = 0;
+        builder.OpenElement(++i, "select");
+        builder.AddMultipleAttributes(++i, AdditionalAttributes);
+        builder.AddAttribute(++i, "class", CssClass);
+        builder.AddAttribute(++i, "value", BindConverter.FormatValue(CurrentValueAsString));
+        builder.AddAttribute(++i, "onchange", onchange);
 
         // Add an option element per enum value
         var enumType = GetEnumType();
         foreach (TEnum value in Enum.GetValues(enumType))
         {
-            builder.OpenElement(5, "option");
-            builder.AddAttribute(6, "value", value.ToString());
-            builder.AddContent(7, GetDisplayName(value));
+            builder.OpenElement(++i, "option");
+            builder.AddAttribute(++i, "value", value.ToString());
+            builder.AddContent(++i, GetDisplayName(value));
             builder.CloseElement();
         }
 
@@ -51,18 +53,6 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
             return true;
         }
 
-        // Map null/empty value to null if the bound object is nullable
-        if (string.IsNullOrEmpty(value))
-        {
-            var nullableType = Nullable.GetUnderlyingType(typeof(TEnum));
-            if (nullableType != null)
-            {
-                result = default!;
-                validationErrorMessage = string.Empty;
-                return true;
-            }
-        }
-
         // The value is invalid => set the error message
         result = default!;
         validationErrorMessage = $"The {FieldIdentifier.FieldName} field is not valid.";
@@ -74,14 +64,14 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
     // - Fallback on Humanizer to decamelize the enum member name
     private static string GetDisplayName(TEnum value)
     {
-        if (value is null) return string.Empty;
+        ArgumentNullException.ThrowIfNull(value);
 
         // Read the Display attribute name
-        var member = value.GetType().GetMember(value.ToString()!).First();
+        var member = value.GetType().GetMember(value.ToString()).First();
 
         var displayName = member.GetCustomAttribute<DisplayAttribute>()?.GetName();
         displayName ??= member.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
-        displayName ??= value.ToString()!;
+        displayName ??= value.ToString();
 
         var regex = new Regex(@"([a-z])([A-Z])");
         displayName = regex.Replace(displayName, "$1 $2");
@@ -95,10 +85,6 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
     private static Type GetEnumType()
     {
         var nullableType = Nullable.GetUnderlyingType(typeof(TEnum));
-
-        if (nullableType != null)
-            return nullableType;
-
-        return typeof(TEnum);
+        return nullableType ?? typeof(TEnum);
     }
 }

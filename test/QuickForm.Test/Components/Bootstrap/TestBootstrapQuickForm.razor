@@ -1,0 +1,88 @@
+﻿@using QuickForm.Attributes
+@using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [Required]
+        [Placeholder]
+        [DisplayName("Email Address")]
+        [EmailAddress]
+        [System.ComponentModel.Description("We will never share your email with anyone")]
+        [ValidFeedback("looks good!")]
+        public string EmailAddress { get; set; } = string.Empty;
+
+        [Required]
+        [Placeholder("Enter password...")]
+        [DataType(DataType.Password)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z]).{8,32}$", ErrorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter...")]
+        [System.ComponentModel.Description("We will never share your password with anyone")]
+        [ValidFeedback("looks good!")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [System.ComponentModel.Description("Please check me")]
+        public bool Checkbox { get; set; }
+
+        // TODO test all the possible bootstrap variations.
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+        BsQuickForm<Model> form = default!;
+
+        var onSubmit = () => form.ValidateAllFields();
+
+        var cut = Render(
+            @<text>
+                <BsQuickForm @ref="form" Model="model" FormClass="form w-50 mx-auto" OnSubmit="@onSubmit"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form class="form w-50 mx-auto" novalidate="">
+                    <div class="text-start mb-3">
+                        <label for:regex="@IdRegex" class="text-info fw-bold mb-1">
+                            Email Address
+                        </label>
+                        <input id:regex="@IdRegex" autofocus="" required="" placeholder="Enter Email Address..." type="email" class="form-control" value="">
+                        <div class="form-text text-muted">
+                            We will never share your email with anyone
+                        </div>
+                        <div class="valid-feedback fw-bold">
+                            looks good!
+                        </div>
+                        <div class="invalid-feedback fw-bold"></div>
+                    </div>
+
+                    <div class="text-start mb-3">
+                        <label for:regex="@IdRegex" class="text-info fw-bold mb-1">
+                            Password
+                        </label>
+                        <input id:regex="@IdRegex" autofocus="" required="" placeholder="Enter password..." type="password" class="form-control" value="">
+                        <div class="form-text text-muted">
+                            We will never share your password with anyone
+                        </div>
+                        <div class="valid-feedback fw-bold">
+                            looks good!
+                        </div>
+                        <div class="invalid-feedback fw-bold"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-outline-success w-100">
+                        submit
+                    </button>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+}

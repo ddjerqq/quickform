@@ -15,8 +15,8 @@
 
     @foreach (var field in Fields)
     {
-        <div class="@(field.PropertyInfo.EditorClass() ?? CssClassProvider?.Editor(field))">
-            <label for="@field.EditorId" class="@(field.PropertyInfo.LabelClass() ?? CssClassProvider?.Label(field))">
+        <div class="@(field.PropertyInfo.EditorClass() ?? FieldCssClassProvider?.Editor(field))">
+            <label for="@field.EditorId" class="@(field.PropertyInfo.LabelClass() ?? FieldCssClassProvider?.Label(field))">
                 @field.PropertyInfo.DisplayName()
             </label>
 
@@ -41,7 +41,6 @@
                 }
             }
 
-            @* TODO only show these where they are needed *@
             @if (field.PropertyInfo.ValidFeedbackText() is var validFeedbackText && !string.IsNullOrEmpty(validFeedbackText))
             {
                 if (ValidFeedbackTemplate is not null)
@@ -50,12 +49,10 @@
                 }
                 else
                 {
-                    // TODO test if anything is outputted if this is null
                     @validFeedbackText
                 }
             }
 
-            @* TODO check if field is readonly or not editable  *@
             @if (InValidFeedbackTemplate is not null)
             {
                 @InValidFeedbackTemplate(field.ValidationMessage)

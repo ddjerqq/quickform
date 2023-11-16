@@ -21,16 +21,4 @@ public sealed class DateTypeAttribute : Attribute
     /// Gets the type of the date input.
     /// </summary>
     public InputDateType InputDateType { get; }
-
-    /// <summary>
-    /// Gets the HTML input type.
-    /// </summary>
-    public string HtmlInputType => InputDateType switch
-    {
-        InputDateType.Date => "date",
-        InputDateType.DateTimeLocal => "datetime-local",
-        InputDateType.Month => "month",
-        InputDateType.Time => "time",
-        _ => throw new ArgumentOutOfRangeException(),
-    };
 }

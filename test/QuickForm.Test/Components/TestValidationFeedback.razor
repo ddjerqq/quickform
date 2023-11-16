@@ -1,11 +1,17 @@
-﻿@inherits BaseTest
+﻿@using QuickForm.Attributes
+@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
 
 @code
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class Model
     {
-        // TODO
+        [ValidFeedback("valid message")]
+        public string A { get; set; } = default!;
+
+        [Required(ErrorMessage = "error message")]
+        public string B { get; set; } = default!;
     }
 
     [Test]
@@ -22,8 +28,40 @@
         // assert
         cut.MarkupMatches(
             @<text>
-                <form novalidate>
-                    @* TODO *@
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="valid"/>
+                        valid message
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" required autofocus class="valid"/>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        // act
+        cut.Find("[required]").Change(string.Empty);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="valid"/>
+                        valid message
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" required autofocus aria-invalid="true" class="modified invalid" value=""/>
+                        <div class="validation-message">error message</div>
+                    </div>
                 </form>
              </text>);
 

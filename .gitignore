@@ -1,6 +1,11 @@
 ﻿/.idea/*
 *.props
 *.cache
+QuickForm.sln.DotSettings.user
 src/QuickForm/bin/*
 src/QuickForm/obj/*
+test/QuickForm.Samples/bin/*
+test/QuickForm.Samples/obj/*
+test/QuickForm.Test/bin/*
+test/QuickForm.Test/obj/*
 *.nupkg

@@ -4,6 +4,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.ComponentModel.DataAnnotations.Schema
 @using System.ComponentModel
+@using System.Diagnostics.CodeAnalysis
 @using QuickForm.Attributes
 
 <datalist id="dates">
@@ -20,12 +21,15 @@
     }
 </datalist>
 
-<BsQuickForm Model="Model" FormClass="form w-50 mx-auto p-5" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit"/>
+<BsQuickForm @ref="Form" Model="Model" FormClass="form w-50 mx-auto p-5" OnValidSubmit="OnValidSubmit" OnInvalidSubmit="OnInvalidSubmit"/>
 
 @code {
 
+    public BsQuickForm<ExampleModel> Form { get; set; } = new();
+
     public ExampleModel Model { get; set; } = new();
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public enum Choices
     {
         [Display(Name = "bad")]
@@ -38,6 +42,7 @@
         ChoiceC,
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ExampleModel
     {
         public static readonly IEnumerable<string> ItemChoices = new List<string> { "foo", "bar", "baz", "candy", "banshee" };
@@ -173,7 +178,7 @@
 
     private void OnInvalidSubmit(EditContext editContext)
     {
-        editContext.Validate();
+        Form.ValidateAllFields();
         Console.WriteLine("Form invalid");
     }
 

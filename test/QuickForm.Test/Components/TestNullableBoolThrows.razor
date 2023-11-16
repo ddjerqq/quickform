@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using QuickForm.Common
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        public bool? A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        // assert
+        // assert not passing the model throws something idk
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Render(
+                @<text>
+                    <QuickForm Model="model"/>
+                 </text>);
+        });
+    }
+}

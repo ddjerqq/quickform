@@ -122,7 +122,6 @@ internal static class PropertyInfoExtensions
         { (t, _) => t == typeof(decimal?), typeof(InputNumber<decimal?>) },
 
         { (t, dt) => t == typeof(string) && dt is DataType.MultilineText, typeof(InputTextArea) },
-        { (t, _) => t == typeof(string), typeof(InputText) },
 
         { (t, _) => t == typeof(DateTime), typeof(InputDate<DateTime>) },
         { (t, _) => t == typeof(DateTimeOffset), typeof(InputDate<DateTimeOffset>) },
@@ -141,81 +140,60 @@ internal static class PropertyInfoExtensions
         var dType = prop.GetCustomAttribute<DataTypeAttribute>();
 
         if (type == typeof(bool?))
+            // TODO make intermediate value, instead of denying nullable bools
             throw new InvalidOperationException("Nullable bools are not supported, Please just use a regular bool field.");
 
         foreach (var (predicate, componentType) in InputTypes)
             if (predicate(type, dType?.DataType))
                 return componentType;
 
-        if (type.IsEnum && !prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
+        if (type.IsEnum)
+        {
             return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
+
+            // TODO fix nullable enums
+            // if (!prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
+            // {
+            //     return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
+            // }
+            // else
+            // {
+            //     // TODO flags multi choice select
+            // }
+        }
 
         return typeof(InputText);
     }
 
-    // TODO god this needs refactoring
+    private static readonly Dictionary<Func<Type, DataType?, bool>, object?> HtmlTypeAttributes = new()
+    {
+        { (t, _) => t == typeof(bool), "checkbox" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Date, "date" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Time, "time" },
+        { (t, dt) => t == typeof(string) && dt is DataType.DateTime, "datetime-local" },
+        { (t, dt) => t == typeof(string) && dt is DataType.EmailAddress, "email" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Password, "password" },
+        { (t, dt) => t == typeof(string) && dt is DataType.PhoneNumber, "tel" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Url or DataType.ImageUrl, "url" },
+
+        { (t, _) => t == typeof(DateTime), InputDateType.DateTimeLocal },
+        { (t, _) => t == typeof(DateTimeOffset), InputDateType.DateTimeLocal },
+        { (t, _) => t == typeof(DateOnly), InputDateType.Date },
+        { (t, _) => t == typeof(TimeOnly), InputDateType.Time },
+    };
+
     internal static object? GetHtmlInputType(this PropertyInfo prop)
     {
         var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
         var dataTypeAttribute = prop.GetCustomAttribute<DataTypeAttribute>();
 
-        if (type == typeof(bool))
-            return "checkbox";
+        if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly) || type == typeof(TimeOnly))
+            if (prop.GetCustomAttribute<DateTypeAttribute>() is { InputDateType: var inputDateType })
+                return inputDateType;
 
-        if (type == typeof(string))
-        {
-            if (dataTypeAttribute?.DataType is DataType.Date or DataType.Time or DataType.DateTime)
-            {
-                // var logger = LoggerFactory.Create(_ => { }).CreateLogger(type);
-                //
-                // // TODO test if this even logs anything
-                // logger.LogWarning(
-                //     "Do not use Date, Time, or DateTime DataType attributes on string properties. " +
-                //     "Instead use DateTime type and DateTypeAttribute to specify the type of the date you want to use." +
-                //     "Class: {PropClass}, Property: {PropName}",
-                //     prop.DeclaringType?.FullName,
-                //     prop.Name);
-
-                return dataTypeAttribute.DataType switch
-                {
-                    DataType.Date => "date",
-                    DataType.Time => "time",
-                    DataType.DateTime => "datetime-local",
-                    _ => null,
-                };
-            }
-
-            return dataTypeAttribute?.DataType switch
-            {
-                DataType.EmailAddress => "email",
-                DataType.Password => "password",
-                DataType.PhoneNumber => "tel",
-                DataType.Url or DataType.ImageUrl => "url",
-                _ => null,
-            };
-        }
-
-        if (type == typeof(DateTime)
-            || type == typeof(DateTimeOffset)
-            || type == typeof(DateOnly)
-            || type == typeof(TimeOnly))
-        {
-            var dateTypeAttribute = prop.GetCustomAttribute<DateTypeAttribute>();
-            if (dateTypeAttribute is not null)
-                return dateTypeAttribute.InputDateType;
-
-            if (type == typeof(DateTime))
-                return InputDateType.DateTimeLocal;
-
-            if (type == typeof(DateTimeOffset))
-                return InputDateType.DateTimeLocal;
-
-            if (type == typeof(DateOnly))
-                return InputDateType.Date;
-
-            if (type == typeof(TimeOnly))
-                return InputDateType.Time;
-        }
+        foreach ((var pred, object? htmlInputType) in HtmlTypeAttributes)
+            if (pred(type, dataTypeAttribute?.DataType))
+                return htmlInputType;
 
         return null;
     }

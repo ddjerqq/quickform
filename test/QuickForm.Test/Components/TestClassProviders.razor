@@ -1,0 +1,160 @@
+﻿@using QuickForm.Common
+@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [RegularExpression(@"[a-z]{0,10}")]
+        public string A { get; set; } = default!;
+
+        // this will have a different rule in the css provider, cuz its an int
+        public int B { get; set; } = default!;
+    }
+
+    [Test]
+    public void TestQuickFormFieldCssClassProvider()
+    {
+        // arrange
+        var model = new Model();
+        var validationCssClassProvider = new CustomQuickFormFieldCssClassProvider("editor", "label", "input");
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model" FieldCssClassProvider="validationCssClassProvider"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div class="editor">
+                        <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input valid"/>
+                    </div>
+
+                    <div class="editor">
+                        <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="number" value="0" step="any" autofocus class="input valid"/>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+
+    [Test]
+    public void TestQuickFormFieldCssClassProviderWithPerFieldClass()
+    {
+        // arrange
+        var model = new Model();
+        var validationCssClassProvider = new CustomQuickFormFieldCssClassProvider
+        {
+            Editor = f => f.PropertyInfo.PropertyType == typeof(int) ? "editor-int" : "editor",
+            Label = f => f.PropertyInfo.PropertyType == typeof(int) ? "label-int" : "label",
+            Input = f => f.PropertyInfo.PropertyType == typeof(int) ? "input-int" : "input",
+        };
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model" FieldCssClassProvider="validationCssClassProvider"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div class="editor">
+                        <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input valid"/>
+                    </div>
+
+                    <div class="editor-int">
+                        <label for:ignoreCase:regex="@IdRegex" class="label-int" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="number" value="0" step="any" autofocus class="input-int valid"/>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+
+    [Test]
+    public void TestValidationCssClassProvider()
+    {
+        // arrange
+        var model = new Model();
+        var validationCssClassProvider = new CustomValidationCssClassProvider("is-valid", "is-invalid");
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model" ValidationCssClassProvider="validationCssClassProvider"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus />
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="number" value="0" step="any" />
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        // act
+        cut.Find("form>div:first-child>input").Change("foo");
+        cut.Find("[type=number]").Change(1);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus value="foo" class="is-valid" />
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="number" value="1" step="any" class="is-valid" />
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        // act
+        cut.Find("form>div:first-child>input").Change("UPPERCASE");
+        cut.Find("[type=number]").Change(1234567891011);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus aria-invalid="true" value="UPPERCASE" class="is-invalid" />
+                        <div class="validation-message">The field A must match the regular expression '[a-z]{0,10}'.</div>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus aria-invalid="true" type="number" value="1" step="any" class="is-invalid" />
+                        <div class="validation-message">The B field must be a number.</div>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+    }
+}

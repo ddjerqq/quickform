@@ -1,11 +1,23 @@
-﻿@inherits BaseTest
+﻿@using QuickForm.Attributes
+@using Microsoft.AspNetCore.Components.Forms
+@inherits BaseTest
 
 @code
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class Model
     {
-        // TODO
+        [DateType(InputDateType.Date)]
+        public DateTime A { get; set; }
+
+        [DateType(InputDateType.Time)]
+        public DateTime B { get; set; }
+
+        [DateType(InputDateType.Month)]
+        public DateTime C { get; set; }
+
+        [DateType(InputDateType.DateTimeLocal)]
+        public DateTime D { get; set; }
     }
 
     [Test]
@@ -22,8 +34,26 @@
         // assert
         cut.MarkupMatches(
             @<text>
-                <form novalidate>
-                    @* TODO *@
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="date" value="0001-01-01" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="time" value="00:00:00" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="month" value="0001-01" autofocus class="valid"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="datetime-local" value="0001-01-01T00:00:00" autofocus class="valid"/>
+                    </div>
                 </form>
              </text>);
 

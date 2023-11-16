@@ -5,7 +5,7 @@ namespace QuickForm.Common;
 /// <summary>
 /// Provides the base css classes for the quick form.
 /// </summary>
-public interface IQuickFormClassProvider
+public interface IQuickFormFieldCssClassProvider
 {
     /// <summary>
     /// Gets the base css class for the Input container element.

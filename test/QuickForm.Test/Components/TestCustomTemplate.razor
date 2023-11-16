@@ -1,4 +1,5 @@
-﻿@using System.ComponentModel.DataAnnotations
+﻿@using QuickForm.Attributes
+@using System.ComponentModel.DataAnnotations
 @inherits BaseTest
 
 @code
@@ -6,7 +7,10 @@
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class Model
     {
-        // TODO test
+        [ValidFeedback("valid-feedback-text")]
+        [System.ComponentModel.Description("description-text")]
+        [Required(ErrorMessage = "required-error-message")]
+        public string A { get; set; } = default!;
     }
 
     [Test]
@@ -17,14 +21,83 @@
 
         var cut = Render(
             @<text>
-                <QuickForm Model="model"/>
+                <QuickForm Model="model">
+                    <InputTemplate>
+                        <div class="input">
+                            @context
+                        </div>
+                    </InputTemplate>
+
+                    <DescriptionTemplate>
+                        <div class="description">
+                            @context
+                        </div>
+                    </DescriptionTemplate>
+
+                    <ValidFeedbackTemplate>
+                        <div class="valid-feedback">
+                            @context
+                        </div>
+                    </ValidFeedbackTemplate>
+
+                    <InValidFeedbackTemplate>
+                        <div class="invalid-feedback">
+                            @context
+                        </div>
+                    </InValidFeedbackTemplate>
+
+                    <SubmitButtonTemplate>
+                        <button type="submit" class="submit-button">
+                            submit
+                        </button>
+                    </SubmitButtonTemplate>
+                </QuickForm>
              </text>);
 
         // assert
         cut.MarkupMatches(
             @<text>
-                <form novalidate>
-                    @* TODO *@
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <div class="input">
+                            <input id:ignoreCase:regex="@IdRegex" required autofocus class="valid"/>
+                        </div>
+                        <div class="description">description-text</div>
+                        <div class="valid-feedback">valid-feedback-text</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        submit
+                    </button>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        // act
+        cut.Find("input").Change(string.Empty);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <div class="input">
+                            <input id:ignoreCase:regex="@IdRegex" aria-invalid="true" required autofocus class="modified invalid" value=""/>
+                        </div>
+                        <div class="description">description-text</div>
+                        <div class="valid-feedback">valid-feedback-text</div>
+                        <div class="invalid-feedback">
+                            <div class="validation-message">required-error-message</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        submit
+                    </button>
                 </form>
              </text>);
 

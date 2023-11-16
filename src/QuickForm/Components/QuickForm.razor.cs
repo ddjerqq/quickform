@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using QuickForm.Common;
 using Microsoft.AspNetCore.Components.Web;
+using QuickForm.Common;
 
 namespace QuickForm.Components;
 
@@ -23,12 +23,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     protected bool HasSetModelExplicitly;
 
     /// <summary>
-    /// The <see cref="EditContext"/> instance explicitly associated with this model
-    /// </summary>
-    protected EditContext? InternalEditContext;
-
-    /// <summary>
-    /// Indicates if the <see cref="EditContext"/> has been set explicitly.
+    /// Indicates if the <see cref="Microsoft.AspNetCore.Components.Forms.EditContext"/> has been set explicitly.
     /// </summary>
     protected bool HasSetEditContextExplicitly;
 
@@ -69,6 +64,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Gets or sets the model to be edited / created by this form.
     /// </summary>
     [Parameter]
+    [EditorRequired]
     public TEntity? Model
     {
         get => InternalModel;
@@ -80,18 +76,9 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     }
 
     /// <summary>
-    /// Gets or sets the <see cref="EditContext"/> instance explicitly associated with this model
+    /// Gets or sets the &lt;see cref="EditContext"/&gt; instance explicitly associated with this model
     /// </summary>
-    [Parameter]
-    public EditContext EditContext
-    {
-        get => InternalEditContext!;
-        set
-        {
-            InternalEditContext = value;
-            HasSetEditContextExplicitly = value != null!;
-        }
-    }
+    public EditContext? EditContext { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the CSS class to be applied to the underlying EditForm.
@@ -117,24 +104,24 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
 
     /// <summary>
     /// A callback that will be invoked when the form is submitted and the
-    /// <see cref="EditContext"/> is determined to be valid.
+    /// <see cref="Microsoft.AspNetCore.Components.Forms.EditContext"/> is determined to be valid.
     /// </summary>
     [Parameter]
     public EventCallback<EditContext> OnValidSubmit { get; set; }
 
     /// <summary>
     /// A callback that will be invoked when the form is submitted and the
-    /// <see cref="EditContext"/> is determined to be invalid.
+    /// <see cref="Microsoft.AspNetCore.Components.Forms.EditContext"/> is determined to be invalid.
     /// </summary>
     [Parameter]
     public EventCallback<EditContext> OnInvalidSubmit { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="IQuickFormClassProvider"/> that is used to determine the CSS class
+    /// Gets or sets the <see cref="IQuickFormFieldCssClassProvider"/> that is used to determine the CSS class
     /// for the elements on the form.
     /// </summary>
     [Parameter]
-    public IQuickFormClassProvider? CssClassProvider { get; set; }
+    public IQuickFormFieldCssClassProvider? FieldCssClassProvider { get; set; }
 
     /// <summary>
     /// Gets or sets the <see cref="ValidationCssClassProvider"/> that is used to determine the CSS class,
@@ -149,16 +136,22 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    internal string BaseEditorId { get; } = Guid.NewGuid().ToString()[..8];
-
-    internal List<QuickFormField<TEntity>> Fields { get; set; } = new();
-
     /// <summary>
-    /// Triggers a validation of the form.
+    /// Requests that all fields on the form be validated, regardless of their modification state.
+    /// This method internally sets the <see cref="CustomValidationCssClassProvider"/>.
+    /// <see cref="CustomValidationCssClassProvider.ValidateAllFields"/> property to true.
     /// </summary>
-    public void Revalidate()
+    /// <note>
+    /// It would make sense to call this after every submit.
+    /// </note>
+    public void ValidateAllFields()
     {
-        InternalEditContext?.Validate();
+        // TODO test this
+        ArgumentNullException.ThrowIfNull(EditContext);
+
+        EditContext.Validate();
+        if (ValidationCssClassProvider is CustomValidationCssClassProvider provider)
+            provider.ValidateAllFields = true;
     }
 
     /// <inheritdoc />
@@ -168,23 +161,14 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
         Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
     }
 
+    internal string BaseEditorId { get; } = Guid.NewGuid().ToString()[..8];
+
+    internal List<QuickFormField<TEntity>> Fields { get; set; } = new();
+
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-
-        switch (HasSetEditContextExplicitly)
-        {
-            case true when Model is not null:
-                throw new InvalidOperationException(
-                    $"{nameof(EditForm)} requires a {nameof(Model)} " +
-                    $"parameter, or an {nameof(EditContext)} parameter, but not both.");
-
-            case false when Model is null:
-                throw new InvalidOperationException(
-                    $"{nameof(EditForm)} requires either a {nameof(Model)} " +
-                    $"parameter, or an {nameof(EditContext)} parameter, please provide one of these.");
-        }
 
         // copied from EditForm.cs
         // If you're using OnSubmit, it becomes your responsibility to trigger validation manually
@@ -198,14 +182,14 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
 
         // Update _editContext if we don't have one yet, or if they are supplying a
         // potentially new EditContext, or if they are supplying a different Model
-        if (Model is not null && Model != InternalEditContext?.Model)
+        if (Model is not null && Model != EditContext?.Model)
         {
-            InternalEditContext = new EditContext(Model!);
-            InternalEditContext.SetFieldCssClassProvider(ValidationCssClassProvider);
+            EditContext = new EditContext(Model!);
+            EditContext.SetFieldCssClassProvider(ValidationCssClassProvider);
         }
 
         // set the model from EditContext.
-        Model ??= EditContext.Model as TEntity;
+        Model ??= EditContext?.Model as TEntity;
 
         Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
         Fields = QuickFormField<TEntity>.FromForm(this).ToList();
@@ -215,11 +199,9 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// <summary>
     /// Invoked when the value of a field changes.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     protected void OnValueChanged(object? sender, EventArgs e)
     {
-        InternalEditContext?.Validate();
+        EditContext?.Validate();
         InvokeAsync(() => OnModelChanged.InvokeAsync(Model));
     }
 }

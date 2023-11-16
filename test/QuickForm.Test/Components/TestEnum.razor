@@ -1,0 +1,164 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private enum Enum
+    {
+        [Display(Name = "a")]
+        A,
+
+        [Display(Name = "b")]
+        B,
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        public Enum A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" autofocus class="valid" value="A">
+                            <option value="A" selected>a</option>
+                            <option value="B">b</option>
+                        </select>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        Assert.That(model.A, Is.EqualTo(Enum.A));
+
+        // act
+        cut.Find("select").Change("B");
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" autofocus class="modified valid" value="B">
+                            <option value="A">a</option>
+                            <option value="B" selected>b</option>
+                        </select>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        Assert.That(model.A, Is.EqualTo(Enum.B));
+    }
+
+    [Test]
+    public void TestNull()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" autofocus class="valid" value="A">
+                            <option value="A" selected>a</option>
+                            <option value="B">b</option>
+                        </select>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        Assert.That(model.A, Is.EqualTo(Enum.A));
+
+        // act
+        cut.Find("select").Change(string.Empty);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" autofocus class="valid" value="A">
+                            <option value="A" selected>a</option>
+                            <option value="B">b</option>
+                        </select>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        // act
+        cut.Find("select").Change("C");
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" aria-invalid="true" autofocus class="modified invalid" value="A">
+                            <option value="A" selected>a</option>
+                            <option value="B">b</option>
+                        </select>
+                        <div class="validation-message" diff:ignoreChildren></div>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        Assert.That(model.A, Is.EqualTo(Enum.A));
+
+        // act
+        cut.Find("select").Change<string?>(value: null);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" autofocus class="modified valid" value="A">
+                            <option value="A" selected>a</option>
+                            <option value="B">b</option>
+                        </select>
+                    </div>
+                </form>
+             </text>);
+
+        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+
+        Assert.That(model.A, Is.EqualTo(Enum.A));
+    }
+}

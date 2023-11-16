@@ -1,11 +1,15 @@
-﻿@inherits BaseTest
+﻿@using QuickForm.Attributes
+@inherits BaseTest
 
 @code
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class Model
     {
-        // TODO
+        [EditorClass("editor")]
+        [LabelClass("label")]
+        [InputClass("input")]
+        public string A { get; set; } = default!;
     }
 
     [Test]
@@ -22,8 +26,11 @@
         // assert
         cut.MarkupMatches(
             @<text>
-                <form novalidate>
-                    @* TODO *@
+                <form diff:ignoreAttributes>
+                    <div class="editor">
+                        <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input valid"/>
+                    </div>
                 </form>
              </text>);
 

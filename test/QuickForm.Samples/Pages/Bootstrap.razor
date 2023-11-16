@@ -3,29 +3,40 @@
 @using QuickForm.Attributes
 @using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
 @using QuickForm.Components.Bootstrap
 
 <PageTitle>Bootstrap example</PageTitle>
 
-<BsQuickForm Model="Model" FormClass="form w-50 mx-auto" OnValidSubmit="OnValidSubmit" />
+<BsQuickForm @ref="Form" Model="Model" OnSubmit="@OnSubmit"/>
 
 @code {
 
+    public BsQuickForm<LoginCommand> Form { get; set; } = default!;
+
     public LoginCommand Model { get; set; } = new();
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public enum FavoriteEmoji
+    {
+        [Display(Name = "😺")]
+        A,
+
+        [Display(Name = "🐶")]
+        B,
+
+        [Display(Name = "🦝")]
+        C,
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class LoginCommand
     {
-        // makes the field required
         [Required]
-        // without a value, the default will be enter {displayName}...
         [Placeholder]
-        // the display name changes the label for the input
-        // without the property's name will be used split into words with the first one capitalized.
         [DisplayName("Email Address")]
-        // data annotation attribute for validation.
         [EmailAddress]
-
-        // this will be displayed below the input
+        [ValidFeedback("Looks good!")]
         [Description("We will never share your email with anyone")]
         public string EmailAddress { get; set; } = string.Empty;
 
@@ -35,10 +46,20 @@
         [Description("We will never share your password with anyone")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z]).{8,32}$", ErrorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter...")]
         public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [Description("Please check me")]
+        public bool Checkbox { get; set; }
+
+        [Required]
+        [DisplayName("Favorite Emoji")]
+        [Description("Please select one")]
+        public FavoriteEmoji? FavEmoji { get; set; }
     }
 
-    private void OnValidSubmit()
+    private void OnSubmit()
     {
+        Form.ValidateAllFields();
         Console.WriteLine("Form submitted");
     }
 

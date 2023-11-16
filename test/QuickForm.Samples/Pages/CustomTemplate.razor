@@ -4,16 +4,18 @@
 @using QuickForm.Attributes
 @using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
 @using QuickForm.Common
 
 <PageTitle>Index</PageTitle>
 
 <div class="text"></div>
 
-<QuickForm @ref="@QuickForm" TEntity="LoginCommand" Model="Model"
+<QuickForm @ref="Form" TEntity="LoginCommand"
+           Model="Model" EditContext="EditContext"
            FormClass="form w-50 mx-auto"
-           CssClassProvider="CustomQuickFormClassProvider"
-           EditContext="EditContext" OnSubmit="@OnSubmit" novalidate>
+           FieldCssClassProvider="CustomQuickFormFieldCssClassProvider"
+           OnSubmit="@OnSubmit" novalidate>
     <DescriptionTemplate>
         <div class="fs-6 form-text text-muted">
             @context
@@ -41,14 +43,13 @@
 
 @code {
 
-    public QuickForm<LoginCommand> QuickForm { get; set; } = default!;
+    public QuickForm<LoginCommand> Form { get; set; } = default!;
 
     public LoginCommand Model { get; set; } = new();
 
-    public EditContext EditContext { get; set; } = default!;
+    public CustomQuickFormFieldCssClassProvider CustomQuickFormFieldCssClassProvider { get; set; } = new("text-start mb-1 mb-md-3", "mb-1 fw-bold text-info", "form-control");
 
-    public CustomQuickFormClassProvider CustomQuickFormClassProvider { get; set; } = new("text-start mb-1 mb-md-3", "mb-1 fw-bold text-info", "form-control");
-
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class LoginCommand
     {
         [Description("We will never share your email with anyone else.")]
@@ -67,7 +68,7 @@
 
     public void OnSubmit()
     {
-        QuickForm.EditContext.Validate();
+        Form.EditContext?.Validate();
         StateHasChanged();
     }
 

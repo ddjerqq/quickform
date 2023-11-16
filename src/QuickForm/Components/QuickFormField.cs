@@ -30,7 +30,7 @@ internal class QuickFormField<TEntity> : IQuickFormField
                 { "Value", Value },
                 { "autofocus", true },
                 { "required", PropertyInfo.IsRequired() },
-                { "class", PropertyInfo.InputClass() ?? _form.CssClassProvider?.Input(this) },
+                { "class", PropertyInfo.InputClass() ?? _form.FieldCssClassProvider?.Input(this) },
                 { "ValueExpression", expressionContainer.ValueExpression }
             };
 
