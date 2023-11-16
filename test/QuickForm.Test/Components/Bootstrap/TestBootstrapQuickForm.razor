@@ -215,7 +215,7 @@
 
         var form = cut.Instance;
 
-        form.ValidateAllFields();
+        form.ValidationCssClassProvider.ValidateAllFields = true;
 
         cut.MarkupMatches(
             @<text>

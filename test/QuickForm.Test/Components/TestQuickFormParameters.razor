@@ -15,7 +15,7 @@
         var model = new Model();
 
         var fieldCssClassProvider = new CustomQuickFormFieldCssClassProvider("editor", "label", "input");
-        var validationCssClassProvider = new CustomValidationCssClassProvider("valid", "invalid");
+        var validationCssClassProvider = new CustomValidationCssClassProvider(string.Empty, "valid", "invalid");
 
         var additionalAttributes = new Dictionary<string, object?> { { "attribute", "value" } };
 

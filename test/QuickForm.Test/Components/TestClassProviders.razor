@@ -30,12 +30,12 @@
                 <form diff:ignoreAttributes>
                     <div class="editor">
                         <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input valid"/>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input"/>
                     </div>
 
                     <div class="editor">
                         <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" type="number" value="0" step="any" autofocus class="input valid"/>
+                        <input id:ignoreCase:regex="@IdRegex" type="number" value="0" step="any" autofocus class="input"/>
                     </div>
                 </form>
              </text>);
@@ -64,12 +64,12 @@
                 <form diff:ignoreAttributes>
                     <div class="editor">
                         <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input valid"/>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input"/>
                     </div>
 
                     <div class="editor-int">
                         <label for:ignoreCase:regex="@IdRegex" class="label-int" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" type="number" value="0" step="any" autofocus class="input-int valid"/>
+                        <input id:ignoreCase:regex="@IdRegex" type="number" value="0" step="any" autofocus class="input-int"/>
                     </div>
                 </form>
              </text>);
@@ -81,13 +81,14 @@
     public void TestValidationCssClassProvider()
     {
         var model = new Model();
-        var validationCssClassProvider = new CustomValidationCssClassProvider("is-valid", "is-invalid");
+        var validationCssClassProvider = new CustomValidationCssClassProvider("modified", "is-valid", "is-invalid");
 
         var cut = Render(
             @<text>
                 <QuickForm Model="model" ValidationCssClassProvider="validationCssClassProvider"/>
              </text>);
 
+        // unmodified field should not be validated.
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -113,12 +114,12 @@
                 <form diff:ignoreAttributes>
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus value="foo" class="is-valid" />
+                        <input id:ignoreCase:regex="@IdRegex" autofocus value="foo" class="modified is-valid" />
                     </div>
 
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus type="number" value="1" step="any" class="is-valid" />
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="number" value="1" step="any" class="modified is-valid" />
                     </div>
                 </form>
              </text>);
@@ -133,13 +134,13 @@
                 <form diff:ignoreAttributes>
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus aria-invalid="true" value="UPPERCASE" class="is-invalid" />
+                        <input id:ignoreCase:regex="@IdRegex" autofocus aria-invalid="true" value="UPPERCASE" class="modified is-invalid" />
                         <div class="validation-message">The field A must match the regular expression '[a-z]{0,10}'.</div>
                     </div>
 
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus aria-invalid="true" type="number" value="1" step="any" class="is-invalid" />
+                        <input id:ignoreCase:regex="@IdRegex" autofocus aria-invalid="true" type="number" value="1" step="any" class="modified is-invalid" />
                         <div class="validation-message">The B field must be a number.</div>
                     </div>
                 </form>

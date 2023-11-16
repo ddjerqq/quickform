@@ -26,7 +26,7 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
             Input = field => field.PropertyInfo.PropertyType == typeof(bool) ? "form-check-input" : "form-control",
         };
 
-        ValidationCssClassProvider = new CustomValidationCssClassProvider("is-valid", "is-invalid");
+        ValidationCssClassProvider = new CustomValidationCssClassProvider(string.Empty, "is-valid", "is-invalid");
 
         DescriptionTemplate ??= description =>
         {

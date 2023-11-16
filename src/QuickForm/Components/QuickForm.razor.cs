@@ -124,11 +124,11 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     public IQuickFormFieldCssClassProvider? FieldCssClassProvider { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="ValidationCssClassProvider"/> that is used to determine the CSS class,
+    /// Gets or sets the <see cref="CustomValidationCssClassProvider"/> that is used to determine the CSS class,
     /// for valid and invalid fields.
     /// </summary>
     [Parameter]
-    public FieldCssClassProvider ValidationCssClassProvider { get; set; } = new();
+    public CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = new("modified", "valid", "invalid");
 
     /// <summary>
     /// Gets or sets a collection of additional attributes that will be applied to the created <c>form</c> element.
@@ -146,12 +146,9 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// </note>
     public void ValidateAllFields()
     {
-        // TODO test this
         ArgumentNullException.ThrowIfNull(EditContext);
-
         EditContext.Validate();
-        if (ValidationCssClassProvider is CustomValidationCssClassProvider provider)
-            provider.ValidateAllFields = true;
+        ValidationCssClassProvider.ValidateAllFields = true;
     }
 
     /// <inheritdoc />
