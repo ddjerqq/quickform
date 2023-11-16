@@ -16,7 +16,6 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
         var cut = Render(
@@ -24,7 +23,6 @@
                 <QuickForm Model="model"/>
              </text>);
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form novalidate blazor:onsubmit="1">
@@ -40,6 +38,6 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
     }
 }

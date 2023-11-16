@@ -42,7 +42,7 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         // act
         cut.Find("[required]").Change(string.Empty);
@@ -65,6 +65,6 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
     }
 }

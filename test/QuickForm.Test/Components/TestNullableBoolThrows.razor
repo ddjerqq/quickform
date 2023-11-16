@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
-@using QuickForm.Common
-@inherits BaseTest
+﻿@inherits BaseTest
 
 @code
 {
@@ -13,11 +11,8 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
-        // assert
-        // assert not passing the model throws something idk
         Assert.Throws<InvalidOperationException>(() =>
         {
             Render(

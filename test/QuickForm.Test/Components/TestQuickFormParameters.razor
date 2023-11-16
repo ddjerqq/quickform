@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
-@using QuickForm.Common
+﻿@using QuickForm.Common
 @inherits BaseTest
 
 @code
@@ -13,7 +12,6 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
         var fieldCssClassProvider = new CustomQuickFormFieldCssClassProvider("editor", "label", "input");
@@ -42,7 +40,6 @@
                 </QuickForm>
              </text>);
 
-        // assert
         // assert not passing the model throws something idk
         Assert.Throws<InvalidOperationException>(() =>
         {
@@ -84,7 +81,7 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         // act
         cut.Find(".input").Change(string.Empty);
@@ -101,7 +98,7 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         Assert.That(changed, Is.True);
         Assert.That(submitted, Is.True);

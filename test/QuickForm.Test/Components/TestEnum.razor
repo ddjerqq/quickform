@@ -22,7 +22,6 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
         var cut = Render(
@@ -30,7 +29,6 @@
                 <QuickForm Model="model"/>
              </text>);
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -44,14 +42,12 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         Assert.That(model.A, Is.EqualTo(Enum.A));
 
-        // act
         cut.Find("select").Change("B");
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -65,7 +61,7 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         Assert.That(model.A, Is.EqualTo(Enum.B));
     }
@@ -73,7 +69,6 @@
     [Test]
     public void TestNull()
     {
-        // arrange
         var model = new Model();
 
         var cut = Render(
@@ -81,7 +76,6 @@
                 <QuickForm Model="model"/>
              </text>);
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -95,14 +89,12 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         Assert.That(model.A, Is.EqualTo(Enum.A));
 
-        // act
         cut.Find("select").Change(string.Empty);
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -116,12 +108,10 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
-        // act
         cut.Find("select").Change("C");
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -136,14 +126,12 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         Assert.That(model.A, Is.EqualTo(Enum.A));
 
-        // act
         cut.Find("select").Change<string?>(value: null);
 
-        // assert
         cut.MarkupMatches(
             @<text>
                 <form diff:ignoreAttributes>
@@ -157,7 +145,7 @@
                 </form>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         Assert.That(model.A, Is.EqualTo(Enum.A));
     }

@@ -22,7 +22,7 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
         FieldCssClassProvider = new CustomQuickFormFieldCssClassProvider
         {
             Editor = field => "text-start mb-3" + (field.PropertyInfo.PropertyType == typeof(bool) ? " form-check" : ""),
-            Label = field => "text-info fw-bold mb-1" + (field.PropertyInfo.PropertyType == typeof(bool) ? "form-check-label" : ""),
+            Label = field => "text-info fw-bold mb-1" + (field.PropertyInfo.PropertyType == typeof(bool) ? " form-check-label" : ""),
             Input = field => field.PropertyInfo.PropertyType == typeof(bool) ? "form-check-input" : "form-control",
         };
 
@@ -72,7 +72,6 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
 
         base.OnParametersSet();
 
-        // TODO test that this throws
         if (InputTemplate is not null)
             throw new InvalidOperationException(
                 "InputTemplate is not supported for Bootstrap. " +

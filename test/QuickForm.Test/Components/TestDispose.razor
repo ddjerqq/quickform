@@ -11,7 +11,6 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
         var cut = Render(
@@ -19,7 +18,7 @@
                 <QuickForm Model="model"/>
              </text>);
 
-        NUnit.Framework.TestContext.Out.WriteLine(cut.Markup);
+        Print(cut);
 
         DisposeComponents();
     }
