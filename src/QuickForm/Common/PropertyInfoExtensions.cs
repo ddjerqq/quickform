@@ -140,8 +140,11 @@ internal static class PropertyInfoExtensions
         var dType = prop.GetCustomAttribute<DataTypeAttribute>();
 
         if (type == typeof(bool?))
-            // TODO make intermediate value, instead of denying nullable bools
-            throw new InvalidOperationException("Nullable bools are not supported, Please just use a regular bool field.");
+            throw new InvalidOperationException("Nullable bools are not supported, please just use a regular bool");
+
+        // type is enum and nullable
+        if (type is { IsEnum: true, IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            throw new InvalidOperationException("Nullable enums are not supported, please just use a regular enum");
 
         foreach (var (predicate, componentType) in InputTypes)
             if (predicate(type, dType?.DataType))
@@ -149,17 +152,14 @@ internal static class PropertyInfoExtensions
 
         if (type.IsEnum)
         {
-            return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
-
-            // TODO fix nullable enums
-            // if (!prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
-            // {
-            //     return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
-            // }
-            // else
-            // {
-            //     // TODO flags multi choice select
-            // }
+            if (prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
+            {
+                // TODO flags multi choice select
+            }
+            else
+            {
+                return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
+            }
         }
 
         return typeof(InputText);

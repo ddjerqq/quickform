@@ -1,0 +1,31 @@
+﻿@inherits BaseTest
+
+@code
+{
+    private enum Enum
+    {
+        A,
+        B,
+        C,
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        public Enum? A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Render(
+                @<text>
+                    <QuickForm Model="model"/>
+                 </text>);
+        });
+    }
+}
