@@ -9,10 +9,7 @@ namespace QuickForm.Components;
 internal class QuickFormField<TEntity> : IQuickFormField
     where TEntity : class, new()
 {
-    private readonly QuickForm<TEntity> _form;
-
-    private RenderFragment? _inputComponentTemplate;
-    private RenderFragment? _fieldValidationTemplate;
+    protected readonly QuickForm<TEntity> Form;
 
     public PropertyInfo PropertyInfo { get; }
 
@@ -30,7 +27,7 @@ internal class QuickFormField<TEntity> : IQuickFormField
                 { "Value", Value },
                 { "autofocus", true },
                 { "required", PropertyInfo.IsRequired() },
-                { "class", PropertyInfo.InputClass() ?? _form.FieldCssClassProvider?.Input(this) },
+                { "class", PropertyInfo.InputClass() ?? Form.FieldCssClassProvider?.Input(this) },
                 { "ValueExpression", expressionContainer.ValueExpression }
             };
 
@@ -49,6 +46,16 @@ internal class QuickFormField<TEntity> : IQuickFormField
 
             if (!string.IsNullOrEmpty(PropertyInfo.Placeholder()))
                 attributes["placeholder"] = PropertyInfo.Placeholder();
+
+            if (PropertyInfo.RadioAttribute() is not null)
+            {
+                // TODO implement this one day
+                // attributes["Field"] = this;
+                // attributes["FieldCssClassProvider"] = Form.FieldCssClassProvider;
+                // attributes["ValidationCssClassProvider"] = Form.ValidationCssClassProvider;
+
+                throw new InvalidOperationException("RadioAttribute is not implemented yet.");
+            }
 
             if (PropertyInfo.IsCheckbox())
             {
@@ -69,15 +76,15 @@ internal class QuickFormField<TEntity> : IQuickFormField
 
     protected QuickFormField(QuickForm<TEntity> form, PropertyInfo propertyInfo)
     {
-        _form = form;
+        Form = form;
         PropertyInfo = propertyInfo;
     }
 
     internal event EventHandler? ValueChanged;
 
-    internal string EditorId => _form.BaseEditorId + '_' + PropertyInfo.Name;
+    internal string EditorId => Form.BaseEditorId + '_' + PropertyInfo.Name;
 
-    internal TEntity? Owner => _form.Model;
+    internal TEntity? Owner => Form.Model;
 
     internal object? Value
     {
@@ -96,7 +103,7 @@ internal class QuickFormField<TEntity> : IQuickFormField
     {
         get
         {
-            return _inputComponentTemplate ??= builder =>
+            return builder =>
             {
                 var inputComponentType = PropertyInfo.GetInputComponentType();
 
@@ -111,7 +118,7 @@ internal class QuickFormField<TEntity> : IQuickFormField
     {
         get
         {
-            return _fieldValidationTemplate ??= builder =>
+            return builder =>
             {
                 var expressionContainer = ValidationMessageExpressionContainer.Create(this);
 

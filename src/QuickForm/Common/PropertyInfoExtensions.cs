@@ -103,6 +103,11 @@ internal static class PropertyInfoExtensions
         return prop.GetCustomAttribute<RangeAttribute>();
     }
 
+    internal static RadioAttribute? RadioAttribute(this PropertyInfo prop)
+    {
+        return prop.GetCustomAttribute<RadioAttribute>();
+    }
+
     private static readonly Dictionary<Func<Type, DataType?, bool>, Type> InputTypes = new()
     {
         { (t, _) => t == typeof(bool), typeof(InputCheckbox) },
@@ -142,7 +147,6 @@ internal static class PropertyInfoExtensions
         if (type == typeof(bool?))
             throw new InvalidOperationException("Nullable bools are not supported, please just use a regular bool");
 
-        // type is enum and nullable
         if (type is { IsEnum: true, IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             throw new InvalidOperationException("Nullable enums are not supported, please just use a regular enum");
 
@@ -152,14 +156,21 @@ internal static class PropertyInfoExtensions
 
         if (type.IsEnum)
         {
-            if (prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
+            var isRadio = prop.GetCustomAttribute<RadioAttribute>() is not null;
+            if (isRadio)
+            {
+                // TODO implement this one day
+                // return typeof(InputEnumRadio<>).MakeGenericType(prop.PropertyType);
+                throw new InvalidOperationException("RadioAttribute is not implemented yet.");
+            }
+
+            var isFlagsEnum = prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true);
+            if (isFlagsEnum)
             {
                 // TODO flags multi choice select
             }
-            else
-            {
-                return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
-            }
+
+            return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
         }
 
         return typeof(InputText);

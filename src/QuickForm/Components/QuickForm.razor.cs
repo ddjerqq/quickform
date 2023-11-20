@@ -177,6 +177,8 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
                 $"When supplying an {nameof(OnSubmit)} parameter to " +
                 $"{nameof(EditForm)}, do not also supply {nameof(OnValidSubmit)} or {nameof(OnInvalidSubmit)}.");
 
+        ArgumentNullException.ThrowIfNull(Model);
+
         // Update _editContext if we don't have one yet, or if they are supplying a
         // potentially new EditContext, or if they are supplying a different Model
         if (Model is not null && Model != EditContext?.Model)
