@@ -44,6 +44,10 @@
         [Required]
         [System.ComponentModel.Description("Please select me")]
         public Enum Select { get; set; }
+
+        [DataType("range")]
+        [System.ComponentModel.DataAnnotations.Range(0, 10)]
+        public int Range { get; set; }
     }
 
     [Test]
@@ -114,6 +118,15 @@
                         <div class="form-text text-muted">Please select me</div>
                         <div class="invalid-feedback fw-bold"></div>
                     </div>
+
+                    @* <div class="text-start mb-3"> *@
+                    @*     <label for:regex="@IdRegex" class="text-info fw-bold mb-1"> *@
+                    @*         Range *@
+                    @*     </label> *@
+                    @* *@
+                    @*     <input id:regex="@IdRegex" autofocus required class="form-range" type="range" value="0" min="0" max="10" step="any"/> *@
+                    @*     <div class="invalid-feedback fw-bold"></div> *@
+                    @* </div> *@
 
                     <button type="submit" class="btn btn-outline-success w-100">
                         submit
@@ -202,6 +215,15 @@
                         </select>
 
                         <div class="form-text text-muted">Please select me</div>
+                        <div class="invalid-feedback fw-bold"></div>
+                    </div>
+
+                    <div class="text-start mb-3">
+                        <label for:regex="@IdRegex" class="text-info fw-bold mb-1">
+                            Range
+                        </label>
+
+                        <input id:regex="@IdRegex" autofocus required class="valid form-range" type="range" value="0" min="0" max="10" step="1"/>
                         <div class="invalid-feedback fw-bold"></div>
                     </div>
 

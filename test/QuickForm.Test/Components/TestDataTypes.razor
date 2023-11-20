@@ -29,6 +29,15 @@
 
         [DataType(DataType.MultilineText)]
         public string H { get; set; } = default!;
+
+        [DataType("custom")]
+        public string I { get; set; } = default!;
+
+        [DataType("search")]
+        public string J { get; set; } = default!;
+
+        [DataType("hidden")]
+        public string K { get; set; } = default!;
     }
 
     [Test]
@@ -71,17 +80,33 @@
 
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" type="tel"  autofocus/>
+                        <input id:ignoreCase:regex="@IdRegex" type="tel" autofocus/>
                     </div>
 
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" type="url"  autofocus/>
+                        <input id:ignoreCase:regex="@IdRegex" type="url" autofocus/>
                     </div>
 
                     <div>
                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
                         <textarea id:ignoreCase:regex="@IdRegex" autofocus></textarea>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        @* ReSharper disable once Html.AttributeValueNotResolved *@
+                        <input id:ignoreCase:regex="@IdRegex" type="custom" autofocus />
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="search" autofocus />
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="hidden" autofocus />
                     </div>
                 </form>
              </text>);

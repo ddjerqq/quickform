@@ -198,10 +198,17 @@ internal static class PropertyInfoExtensions
         var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
         var dataTypeAttribute = prop.GetCustomAttribute<DataTypeAttribute>();
 
+        // handle custom DataTypes
+        if (dataTypeAttribute?.DataType == DataType.Custom
+            && !string.IsNullOrEmpty(dataTypeAttribute.CustomDataType))
+            return dataTypeAttribute.CustomDataType;
+
+        // handle dates
         if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly) || type == typeof(TimeOnly))
             if (prop.GetCustomAttribute<DateTypeAttribute>() is { InputDateType: var inputDateType })
                 return inputDateType;
 
+        // handle other types
         foreach ((var pred, object? htmlInputType) in HtmlTypeAttributes)
             if (pred(type, dataTypeAttribute?.DataType))
                 return htmlInputType;

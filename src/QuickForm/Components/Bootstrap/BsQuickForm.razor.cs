@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -21,7 +23,20 @@ public sealed class BsQuickForm<TEntity> : QuickForm<TEntity>
     {
         FieldCssClassProvider = new CustomQuickFormFieldCssClassProvider
         {
-            Editor = field => "text-start mb-3" + (field.PropertyInfo.PropertyType == typeof(bool) ? " form-check" : ""),
+            Editor = field =>
+            {
+                var css = "text-start mb-3";
+
+                if (field.PropertyInfo.PropertyType == typeof(bool))
+                    // TODO we could have form-switch-es as well.
+                    css += " form-check";
+
+                if (field.PropertyInfo.GetCustomAttribute<DataTypeAttribute>() is { CustomDataType: var customDataType }
+                    && !string.IsNullOrEmpty(customDataType))
+                    css += $" {customDataType}";
+
+                return css;
+            },
             Label = field => "text-info fw-bold mb-1" + (field.PropertyInfo.PropertyType == typeof(bool) ? " form-check-label" : ""),
             Input = field => field.PropertyInfo.PropertyType == typeof(bool) ? "form-check-input" : "form-control",
         };
