@@ -51,7 +51,6 @@ internal sealed class InputEnumRadio<TEnum> : InputBase<TEnum>
             builder.AddAttribute(++i, "Value", field.ToString());
             builder.CloseComponent();
 
-            // TODO plain text content or label element?
             builder.AddContent(++i, field.GetDisplayName());
 
             builder.OpenElement(++i, "br");
