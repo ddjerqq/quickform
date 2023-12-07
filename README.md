@@ -1,5 +1,9 @@
 ﻿# ASP.NET Core Blazor `QuickForm` component
 
+
+ [![](https://dcbadge.vercel.app/api/server/DsAXsMuEbx?style=flat)](https://discord.gg/DsAXsMuEbx)
+[![Nuget](https://img.shields.io/nuget/v/QuickForm)](https://www.nuget.org/packages/QuickForm/)
+
 The QuickForm component is a generic Razor component for quickly and efficiently generating HTML forms.
 QuickForm provides a simple and convenient form component for common form rendering scenarios,
 while having plenty of customization options with data annotation attributes. It has two validation schemes:
