@@ -13,78 +13,37 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     where TEntity : class, new()
 {
     /// <summary>
-    /// the model to be edited / created by this form.
+    /// Gets or sets the model to be edited / created by this form.
     /// </summary>
-    protected TEntity? InternalModel;
+    [Parameter, EditorRequired]
+    public TEntity? Model { get; set; }
 
     /// <summary>
-    /// Indicates if the model has been set explicitly.
-    /// </summary>
-    protected bool HasSetModelExplicitly;
-
-    /// <summary>
-    /// Indicates if the <see cref="Microsoft.AspNetCore.Components.Forms.EditContext"/> has been set explicitly.
-    /// </summary>
-    protected bool HasSetEditContextExplicitly;
-
-    /// <summary>
-    /// Gets or sets the title template of the form.
+    /// Gets or sets the class to be applied to the input element, when it's content is valid
     /// </summary>
     [Parameter]
-    public RenderFragment<RenderFragment?>? InputTemplate { get; set; }
+    public string ValidClass { get; set; } = "valid";
 
     /// <summary>
-    /// Gets or sets the title template of the form.
+    /// Gets or sets the class to be applied to the input element, when it's content is invalid
     /// </summary>
     [Parameter]
-    public RenderFragment<string?>? DescriptionTemplate { get; set; }
+    public string InvalidClass { get; set; } = "invalid";
 
     /// <summary>
-    /// Gets or sets the valid feedback template of the form.
+    /// Gets or sets the template for the fields in this form.
     /// </summary>
-    [Parameter]
-    public RenderFragment<string?>? ValidFeedbackTemplate { get; set; }
-
-    /// <summary>
-    /// Gets or sets the invalid feedback template of the form.
-    /// </summary>
-    [Parameter]
-    public RenderFragment<RenderFragment?>? InValidFeedbackTemplate { get; set; }
+    [Parameter, EditorRequired]
+    public RenderFragment<IQuickFormField> ChildContent { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the submit button template of the form.
     /// </summary>
     /// <note>
-    /// Make sure to give this button type="submit" to make it work.
+    /// Make sure to give this button `type="submit"` to make it work.
     /// </note>
     [Parameter]
     public RenderFragment? SubmitButtonTemplate { get; set; }
-
-    /// <summary>
-    /// Gets or sets the model to be edited / created by this form.
-    /// </summary>
-    [Parameter]
-    [EditorRequired]
-    public TEntity? Model
-    {
-        get => InternalModel;
-        set
-        {
-            InternalModel = value;
-            HasSetModelExplicitly = value != null;
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the &lt;see cref="EditContext"/&gt; instance explicitly associated with this model
-    /// </summary>
-    public EditContext? EditContext { get; set; } = default!;
-
-    /// <summary>
-    /// Gets or sets the CSS class to be applied to the underlying EditForm.
-    /// </summary>
-    [Parameter]
-    public string? FormClass { get; set; }
 
     /// <summary>
     /// Gets or sets the callback to be invoked when the model changes.
@@ -117,46 +76,21 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     public EventCallback<EditContext> OnInvalidSubmit { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="IQuickFormFieldCssClassProvider"/> that is used to determine the CSS class
-    /// for the elements on the form.
-    /// </summary>
-    [Parameter]
-    public IQuickFormFieldCssClassProvider? FieldCssClassProvider { get; set; }
-
-    /// <summary>
-    /// Gets or sets the <see cref="CustomValidationCssClassProvider"/> that is used to determine the CSS class,
-    /// for valid and invalid fields.
-    /// </summary>
-    [Parameter]
-    public CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = new("modified", "valid", "invalid");
-
-    /// <summary>
     /// Gets or sets a collection of additional attributes that will be applied to the created <c>form</c> element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <summary>
-    /// Requests that all fields on the form be validated, regardless of their modification state.
-    /// This method internally sets the <see cref="CustomValidationCssClassProvider"/>.
-    /// <see cref="CustomValidationCssClassProvider.ValidateAllFields"/> property to true.
+    /// Gets or sets the <see cref="CustomValidationCssClassProvider"/> that is used to determine the CSS class,
+    /// for valid and invalid fields.
     /// </summary>
-    /// <note>
-    /// It would make sense to call this after every submit.
-    /// </note>
-    public void ValidateAllFields()
-    {
-        ArgumentNullException.ThrowIfNull(EditContext);
-        EditContext.Validate();
-        ValidationCssClassProvider.ValidateAllFields = true;
-    }
+    protected CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = default!;
 
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
-    }
+    /// <summary>
+    /// Gets or sets the &lt;see cref="EditContext"/&gt; instance explicitly associated with this model
+    /// </summary>
+    protected EditContext? EditContext { get; set; }
 
     internal string BaseEditorId { get; } = Guid.NewGuid().ToString()[..8];
 
@@ -179,6 +113,8 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
 
         ArgumentNullException.ThrowIfNull(Model);
 
+        ValidationCssClassProvider = new CustomValidationCssClassProvider("modified", ValidClass, InvalidClass);
+
         // Update _editContext if we don't have one yet, or if they are supplying a
         // potentially new EditContext, or if they are supplying a different Model
         if (Model is not null && Model != EditContext?.Model)
@@ -188,8 +124,6 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
         }
 
         // set the model from EditContext.
-        Model ??= EditContext?.Model as TEntity;
-
         Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
         Fields = QuickFormField<TEntity>.FromForm(this).ToList();
         Fields.ForEach(f => f.ValueChanged += OnValueChanged);
@@ -202,5 +136,12 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     {
         EditContext?.Validate();
         InvokeAsync(() => OnModelChanged.InvokeAsync(Model));
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Fields.ForEach(f => f.ValueChanged -= OnValueChanged);
     }
 }

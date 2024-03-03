@@ -6,62 +6,13 @@
 
 <EditForm EditContext="EditContext"
           OnSubmit="@OnSubmit" OnInvalidSubmit="@OnInvalidSubmit" OnValidSubmit="@OnValidSubmit"
-          class="@FormClass"
-          novalidate
-          @attributes="@AdditionalAttributes">
-
+          AdditionalAttributes="AdditionalAttributes">
     <DataAnnotationsValidator/>
     <FluentValidationValidator/>
 
     @foreach (var field in Fields)
     {
-        <div class="@(field.PropertyInfo.EditorClass() ?? FieldCssClassProvider?.Editor(field))">
-            <label for="@field.EditorId" class="@(field.PropertyInfo.LabelClass() ?? FieldCssClassProvider?.Label(field))">
-                @field.PropertyInfo.DisplayName()
-            </label>
-
-            @if (InputTemplate is not null)
-            {
-                @InputTemplate(field.InputComponentTemplate)
-            }
-            else
-            {
-                @field.InputComponentTemplate
-            }
-
-            @if (field.PropertyInfo.Description() is var descriptionText && !string.IsNullOrEmpty(descriptionText))
-            {
-                if (DescriptionTemplate is not null)
-                {
-                    @DescriptionTemplate(descriptionText)
-                }
-                else
-                {
-                    @descriptionText
-                }
-            }
-
-            @if (field.PropertyInfo.ValidFeedbackText() is var validFeedbackText && !string.IsNullOrEmpty(validFeedbackText))
-            {
-                if (ValidFeedbackTemplate is not null)
-                {
-                    @ValidFeedbackTemplate(validFeedbackText)
-                }
-                else
-                {
-                    @validFeedbackText
-                }
-            }
-
-            @if (InValidFeedbackTemplate is not null)
-            {
-                @InValidFeedbackTemplate(field.ValidationMessage)
-            }
-            else
-            {
-                @field.ValidationMessage
-            }
-        </div>
+        @ChildContent(field)
     }
 
     @if (SubmitButtonTemplate is not null)

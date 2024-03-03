@@ -66,33 +66,9 @@ internal static class PropertyInfoExtensions
         return placeholder.PlaceholderText ?? $"Enter {prop.DisplayName()}...";
     }
 
-    internal static string? InputClass(this PropertyInfo prop)
-    {
-        if (prop.GetCustomAttribute<InputClassAttribute>() is not { Class: var @class })
-            return null;
-
-        return @class;
-    }
-
-    internal static string? EditorClass(this PropertyInfo prop)
-    {
-        if (prop.GetCustomAttribute<EditorClassAttribute>() is not { Class: var @class })
-            return null;
-
-        return @class;
-    }
-
-    internal static string? LabelClass(this PropertyInfo prop)
-    {
-        if (prop.GetCustomAttribute<LabelClassAttribute>() is not { Class: var @class })
-            return null;
-
-        return @class;
-    }
-
     internal static string? ValidFeedbackText(this PropertyInfo prop)
     {
-        if (prop.GetCustomAttribute<ValidFeedbackAttribute>() is not { Message: var message })
+        if (prop.GetCustomAttribute<ValidMessageAttribute>() is not { Message: var message })
             return null;
 
         return message;
@@ -101,11 +77,6 @@ internal static class PropertyInfoExtensions
     internal static RangeAttribute? RangeAttribute(this PropertyInfo prop)
     {
         return prop.GetCustomAttribute<RangeAttribute>();
-    }
-
-    internal static RadioAttribute? RadioAttribute(this PropertyInfo prop)
-    {
-        return prop.GetCustomAttribute<RadioAttribute>();
     }
 
     private static readonly Dictionary<Func<Type, DataType?, bool>, Type> InputTypes = new()
@@ -156,19 +127,8 @@ internal static class PropertyInfoExtensions
 
         if (type.IsEnum)
         {
-            var isRadio = prop.GetCustomAttribute<RadioAttribute>() is not null;
-            if (isRadio)
-            {
-                // TODO implement this one day
-                // return typeof(InputEnumRadio<>).MakeGenericType(prop.PropertyType);
-                throw new InvalidOperationException("RadioAttribute is not implemented yet.");
-            }
-
-            var isFlagsEnum = prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true);
-            if (isFlagsEnum)
-            {
-                // TODO flags multi choice select
-            }
+            if (prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
+                throw new InvalidOperationException("Flags enums are not supported yet");
 
             return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
         }
@@ -179,6 +139,7 @@ internal static class PropertyInfoExtensions
     private static readonly Dictionary<Func<Type, DataType?, bool>, object?> HtmlTypeAttributes = new()
     {
         { (t, _) => t == typeof(bool), "checkbox" },
+
         { (t, dt) => t == typeof(string) && dt is DataType.Date, "date" },
         { (t, dt) => t == typeof(string) && dt is DataType.Time, "time" },
         { (t, dt) => t == typeof(string) && dt is DataType.DateTime, "datetime-local" },
@@ -216,22 +177,13 @@ internal static class PropertyInfoExtensions
         return null;
     }
 
-    /// <summary>
-    /// Determines if this property is marked as init-only.
-    /// </summary>
-    /// <param name="property">The property.</param>
-    /// <returns>True if the property is init-only, false otherwise.</returns>
     internal static bool IsInitOnly(this PropertyInfo property)
     {
         if (!property.CanWrite)
             return false;
 
         var setMethod = property.SetMethod;
-
-        // Get the modifiers applied to the return parameter.
         var setMethodReturnParameterModifiers = setMethod?.ReturnParameter.GetRequiredCustomModifiers();
-
-        // Init-only properties are marked with the IsExternalInit type.
         return setMethodReturnParameterModifiers?.Contains(typeof(System.Runtime.CompilerServices.IsExternalInit)) ?? false;
     }
 }

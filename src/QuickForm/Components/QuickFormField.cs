@@ -11,11 +11,57 @@ internal class QuickFormField<TEntity> : IQuickFormField
 {
     protected readonly QuickForm<TEntity> Form;
 
-    public PropertyInfo PropertyInfo { get; }
+    public string EditorId => $"{Form.BaseEditorId}_{PropertyInfo.Name}";
+
+    public string DisplayName => PropertyInfo.DisplayName();
+
+    public string? Description => PropertyInfo.Description();
+
+    public string? ValidFeedback => PropertyInfo.ValidFeedbackText();
+
+    public RenderFragment<string> InputComponent
+    {
+        get
+        {
+            return @class =>
+            {
+                return builder =>
+                {
+                    var inputComponentType = PropertyInfo.GetInputComponentType();
+
+                    builder.OpenComponent(0, inputComponentType);
+                    builder.AddMultipleAttributes(1, InputComponentAttributes);
+                    builder.AddAttribute(2, "class", @class);
+                    builder.CloseComponent();
+                };
+            };
+        }
+    }
+
+    public RenderFragment<string> ValidationMessages
+    {
+        get
+        {
+            return @class =>
+            {
+                return builder =>
+                {
+                    var expressionContainer = ValidationMessageExpressionContainer.Create(this);
+
+                    builder.OpenComponent(0, typeof(ValidationMessage<>).MakeGenericType(PropertyType));
+                    builder.AddAttribute(1, "For", expressionContainer.Lambda);
+                    builder.AddAttribute(2, "class", @class);
+                    builder.CloseComponent();
+                };
+            };
+        }
+    }
+
+    internal PropertyInfo PropertyInfo { get; }
 
     internal Type PropertyType => PropertyInfo.PropertyType;
 
-    public IDictionary<string, object> InputComponentAttributes
+    internal IDictionary<string, object> InputComponentAttributes
     {
         get
         {
@@ -27,8 +73,7 @@ internal class QuickFormField<TEntity> : IQuickFormField
                 { "Value", Value },
                 { "autofocus", true },
                 { "required", PropertyInfo.IsRequired() },
-                { "class", PropertyInfo.InputClass() ?? Form.FieldCssClassProvider?.Input(this) },
-                { "ValueExpression", expressionContainer.ValueExpression }
+                { "ValueExpression", expressionContainer.ValueExpression },
             };
 
             if (PropertyInfo.IsEditable())
@@ -46,16 +91,6 @@ internal class QuickFormField<TEntity> : IQuickFormField
 
             if (!string.IsNullOrEmpty(PropertyInfo.Placeholder()))
                 attributes["placeholder"] = PropertyInfo.Placeholder();
-
-            if (PropertyInfo.RadioAttribute() is not null)
-            {
-                // TODO implement this
-                // attributes["Field"] = this;
-                // attributes["FieldCssClassProvider"] = Form.FieldCssClassProvider;
-                // attributes["ValidationCssClassProvider"] = Form.ValidationCssClassProvider;
-
-                throw new InvalidOperationException("RadioAttribute is not implemented yet.");
-            }
 
             if (PropertyInfo.IsCheckbox())
             {
@@ -82,8 +117,6 @@ internal class QuickFormField<TEntity> : IQuickFormField
 
     internal event EventHandler? ValueChanged;
 
-    internal string EditorId => Form.BaseEditorId + '_' + PropertyInfo.Name;
-
     internal TEntity? Owner => Form.Model;
 
     internal object? Value
@@ -96,36 +129,6 @@ internal class QuickFormField<TEntity> : IQuickFormField
                 PropertyInfo.SetValue(Owner, value);
                 ValueChanged?.Invoke(this, EventArgs.Empty);
             }
-        }
-    }
-
-    internal RenderFragment InputComponentTemplate
-    {
-        get
-        {
-            return builder =>
-            {
-                var inputComponentType = PropertyInfo.GetInputComponentType();
-
-                builder.OpenComponent(0, inputComponentType);
-                builder.AddMultipleAttributes(1, InputComponentAttributes);
-                builder.CloseComponent();
-            };
-        }
-    }
-
-    internal RenderFragment ValidationMessage
-    {
-        get
-        {
-            return builder =>
-            {
-                var expressionContainer = ValidationMessageExpressionContainer.Create(this);
-
-                builder.OpenComponent(0, typeof(ValidationMessage<>).MakeGenericType(PropertyType));
-                builder.AddAttribute(1, "For", expressionContainer.Lambda);
-                builder.CloseComponent();
-            };
         }
     }
 

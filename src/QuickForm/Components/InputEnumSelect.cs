@@ -19,18 +19,18 @@ internal sealed class InputEnumSelect<TEnum> : InputBase<TEnum>
             culture: null);
 
         int i = 0;
-        builder.OpenElement(++i, "select");
-        builder.AddMultipleAttributes(++i, AdditionalAttributes);
-        builder.AddAttribute(++i, "class", CssClass);
-        builder.AddAttribute(++i, "value", BindConverter.FormatValue(CurrentValueAsString));
-        builder.AddAttribute(++i, "onchange", onchange);
+        builder.OpenElement(i++, "select");
+        builder.AddMultipleAttributes(i++, AdditionalAttributes);
+        builder.AddAttribute(i++, "class", CssClass);
+        builder.AddAttribute(i++, "value", BindConverter.FormatValue(CurrentValueAsString));
+        builder.AddAttribute(i++, "onchange", onchange);
 
         var enumType = Nullable.GetUnderlyingType(typeof(TEnum)) ?? typeof(TEnum);
         foreach (TEnum field in Enum.GetValues(enumType))
         {
-            builder.OpenElement(++i, "option");
-            builder.AddAttribute(++i, "value", field.ToString());
-            builder.AddContent(++i, field.GetDisplayName());
+            builder.OpenElement(i++, "option");
+            builder.AddAttribute(i++, "value", field.ToString());
+            builder.AddContent(i++, field.GetDisplayName());
             builder.CloseElement();
         }
 

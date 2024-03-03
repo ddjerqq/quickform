@@ -28,12 +28,6 @@ public sealed class CustomValidationCssClassProvider : FieldCssClassProvider
         _inValidClass = inValidClass;
     }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the class provider should validate all fields,
-    /// regardless of whether they have been modified or not.
-    /// </summary>
-    public bool ValidateAllFields { get; set; }
-
     /// <inheritdoc />
     public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
     {
@@ -48,7 +42,7 @@ public sealed class CustomValidationCssClassProvider : FieldCssClassProvider
             sb.Append(' ');
         }
 
-        if (isModified || ValidateAllFields)
+        if (isModified)
         {
             var result = isValid
                 ? _validClass

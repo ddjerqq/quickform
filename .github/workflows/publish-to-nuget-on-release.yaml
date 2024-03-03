@@ -1,0 +1,29 @@
+﻿name: Release to NuGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-publish:
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Test 🧪
+        run: dotnet test --verbosity normal
+
+      - name: Pack 📦
+        run: dotnet pack --configuration Release --output .
+
+      - name: Add Github to NuGet Source 🔑
+        run: dotnet nuget add source --username ddjerqq --password ${{ secrets.NUGET_GITHUB_API_KEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ddjerqq/index.json"
+
+      - name: Push to Github 🚀
+        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_GITHUB_API_KEY }} --source "github"
+
+      - name: Push to NuGet 🚀
+        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_APIKEY }} --source "https://api.nuget.org/v3/index.json"
