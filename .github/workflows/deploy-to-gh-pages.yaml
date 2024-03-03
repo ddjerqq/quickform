@@ -23,7 +23,7 @@ jobs:
 
       - name: Change base href in host file to match gh repo name 🏷️
         run: |
-          cd ${{ env.SRC }}/Client
+          cd ${{ env.SRC }}/QuickForm
           REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $NF}')
           sed -i 's/<base href="\/"[[:blank:]]*\/>/<base href="\/'$REPO_NAME'\/" \/>/g' ./wwwroot/index.html
 
