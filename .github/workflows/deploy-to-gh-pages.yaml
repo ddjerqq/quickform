@@ -8,7 +8,8 @@ env:
   NETCORE_VERSION: "8.0.x"
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  SRC: "/home/runner/work/quickform/quickform/src"
+  SRC: "/home/runner/work/QuickForm/QuickForm/src"
+  PROJECT_NAME: "QuickForm"
 
 jobs:
   build-and-deploy:
@@ -23,12 +24,12 @@ jobs:
 
       - name: Change base href in host file to match gh repo name 🏷️
         run: |
-          cd ${{ env.SRC }}/QuickForm
+          cd ${{ env.SRC }}/${{ env.PROJECT_NAME }}
           REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print $NF}')
           sed -i 's/<base href="\/"[[:blank:]]*\/>/<base href="\/'$REPO_NAME'\/" \/>/g' ./wwwroot/index.html
 
       - name: Publish 📦
-        run: dotnet publish ${{ env.SRC }}/QuickForm --configuration Release --output dist
+        run: dotnet publish ${{ env.SRC }}/${{ env.PROJECT_NAME }} --configuration Release --output dist
 
       - name: Create .nojekyll file 📁
         run: touch dist/wwwroot/.nojekyll
