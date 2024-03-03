@@ -5,7 +5,7 @@ namespace QuickForm.Common;
 
 internal record ValidationMessageExpressionContainer(LambdaExpression Lambda)
 {
-    public static ValidationMessageExpressionContainer Create<TEntity>(QuickFormField<TEntity> formField)
+    internal static ValidationMessageExpressionContainer Create<TEntity>(QuickFormField<TEntity> formField)
         where TEntity : class, new()
     {
         // () => Owner.Property

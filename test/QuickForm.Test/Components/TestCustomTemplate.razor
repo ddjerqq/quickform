@@ -1,0 +1,86 @@
+﻿@using QuickForm.Attributes
+@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [ValidMessage("valid-feedback-text")]
+        [System.ComponentModel.Description("description-text")]
+        [Required(ErrorMessage = "required-error-message")]
+        public string A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                 <QuickForm Model="model">
+                     <ChildContent>
+                         <label for="@context.EditorId"></label>
+                     </ChildContent>
+
+                     <SubmitButtonTemplate>
+                         <button type="submit" class="submit-button">
+                             submit
+                         </button>
+                     </SubmitButtonTemplate>
+                 </QuickForm>
+             </text>);
+
+        cut.MarkupMatches(
+            @<text>
+                 <form diff:ignoreAttributes>
+                     <div>
+                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                         <div class="input">
+                             <input id:ignoreCase:regex="@IdRegex" required autofocus/>
+                         </div>
+                         <div class="description">description-text</div>
+                         <div class="valid-feedback">valid-feedback-text</div>
+                         <div class="invalid-feedback"></div>
+                     </div>
+
+                     <button type="submit" class="submit-button">
+                         submit
+                     </button>
+                 </form>
+             </text>);
+
+        Print(cut);
+
+        cut.Find("input").Change(string.Empty);
+
+        cut.MarkupMatches(
+            @<text>
+                 <form diff:ignoreAttributes>
+                     <div>
+                         <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                         <div class="input">
+                             <input id:ignoreCase:regex="@IdRegex" aria-invalid="true" required autofocus class="modified invalid" value=""/>
+                         </div>
+                         <div class="description">
+                             description-text
+                         </div>
+                         <div class="valid-feedback">
+                             valid-feedback-text
+                         </div>
+                         <div class="invalid-feedback">
+                             <div class="validation-message">required-error-message</div>
+                         </div>
+                     </div>
+
+                     <button type="submit" class="submit-button">
+                         submit
+                     </button>
+                 </form>
+             </text>);
+
+        Print(cut);
+    }
+}

@@ -1,0 +1,35 @@
+﻿@using QuickForm.Attributes
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [DataList("list")]
+        public string A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        cut.MarkupMatches(
+            @<text>
+                <form novalidate blazor:onsubmit="1">
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" list="list" autofocus/>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

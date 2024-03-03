@@ -1,0 +1,24 @@
+﻿@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        public bool? A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            Render(
+                @<text>
+                    <QuickForm Model="model"/>
+                 </text>);
+        });
+    }
+}

@@ -10,23 +10,29 @@ namespace QuickForm.Common;
 
 internal static class PropertyInfoExtensions
 {
-    public static bool IsRequired(this PropertyInfo prop)
+    internal static bool IsRequired(this PropertyInfo prop)
     {
         return prop.GetCustomAttribute<RequiredAttribute>() is not null;
     }
 
-    public static bool IsEditable(this PropertyInfo prop)
+    internal static bool IsEditable(this PropertyInfo prop)
     {
-        return prop.SetMethod is not null &&
-               prop.GetCustomAttribute<EditableAttribute>() is null or { AllowEdit: true };
+        var isSetMethodNull = prop.SetMethod is null;
+        var isInitOnly = prop.IsInitOnly();
+
+        if (isSetMethodNull || isInitOnly)
+            return false;
+
+        var editableAttribute = prop.GetCustomAttribute<EditableAttribute>();
+        return editableAttribute?.AllowEdit ?? true;
     }
 
-    public static bool IsCheckbox(this PropertyInfo prop)
+    internal static bool IsCheckbox(this PropertyInfo prop)
     {
         return prop.PropertyType == typeof(bool);
     }
 
-    public static string DisplayName(this PropertyInfo prop)
+    internal static string DisplayName(this PropertyInfo prop)
     {
         string? displayName = null;
 
@@ -37,7 +43,7 @@ internal static class PropertyInfoExtensions
         return displayName;
     }
 
-    public static string? Description(this PropertyInfo prop)
+    internal static string? Description(this PropertyInfo prop)
     {
         string? description = null;
 
@@ -47,117 +53,137 @@ internal static class PropertyInfoExtensions
         return description;
     }
 
-    public static string? DataListName(this PropertyInfo prop)
+    internal static string? DataListName(this PropertyInfo prop)
     {
         return prop.GetCustomAttribute<DataListAttribute>()?.DataListName;
     }
 
-    public static string? Placeholder(this PropertyInfo prop)
+    internal static string? Placeholder(this PropertyInfo prop)
     {
         if (prop.GetCustomAttribute<PlaceholderAttribute>() is not { } placeholder)
-        {
             return null;
-        }
 
         return placeholder.PlaceholderText ?? $"Enter {prop.DisplayName()}...";
     }
 
-    public static RangeAttribute? RangeAttribute(this PropertyInfo prop)
+    internal static string? ValidFeedbackText(this PropertyInfo prop)
+    {
+        if (prop.GetCustomAttribute<ValidMessageAttribute>() is not { Message: var message })
+            return null;
+
+        return message;
+    }
+
+    internal static RangeAttribute? RangeAttribute(this PropertyInfo prop)
     {
         return prop.GetCustomAttribute<RangeAttribute>();
     }
 
-    // this could be written better, but I cba, and I admire yandere developer so...
-    public static Type GetInputComponentType(this PropertyInfo prop)
+    private static readonly Dictionary<Func<Type, DataType?, bool>, Type> InputTypes = new()
+    {
+        { (t, _) => t == typeof(bool), typeof(InputCheckbox) },
+
+        { (t, _) => t == typeof(short), typeof(InputNumber<short>) },
+        { (t, _) => t == typeof(int), typeof(InputNumber<int>) },
+        { (t, _) => t == typeof(long), typeof(InputNumber<long>) },
+        { (t, _) => t == typeof(float), typeof(InputNumber<float>) },
+        { (t, _) => t == typeof(double), typeof(InputNumber<double>) },
+        { (t, _) => t == typeof(decimal), typeof(InputNumber<decimal>) },
+
+        { (t, _) => t == typeof(short?), typeof(InputNumber<short?>) },
+        { (t, _) => t == typeof(int?), typeof(InputNumber<int?>) },
+        { (t, _) => t == typeof(long?), typeof(InputNumber<long?>) },
+        { (t, _) => t == typeof(float?), typeof(InputNumber<float?>) },
+        { (t, _) => t == typeof(double?), typeof(InputNumber<double?>) },
+        { (t, _) => t == typeof(decimal?), typeof(InputNumber<decimal?>) },
+
+        { (t, dt) => t == typeof(string) && dt is DataType.MultilineText, typeof(InputTextArea) },
+
+        { (t, _) => t == typeof(DateTime), typeof(InputDate<DateTime>) },
+        { (t, _) => t == typeof(DateTimeOffset), typeof(InputDate<DateTimeOffset>) },
+        { (t, _) => t == typeof(DateOnly), typeof(InputDate<DateOnly>) },
+        { (t, _) => t == typeof(TimeOnly), typeof(InputDate<TimeOnly>) },
+
+        { (t, _) => t == typeof(DateTime?), typeof(InputDate<DateTime?>) },
+        { (t, _) => t == typeof(DateTimeOffset?), typeof(InputDate<DateTimeOffset?>) },
+        { (t, _) => t == typeof(DateOnly?), typeof(InputDate<DateOnly?>) },
+        { (t, _) => t == typeof(TimeOnly?), typeof(InputDate<TimeOnly?>) },
+    };
+
+    internal static Type GetInputComponentType(this PropertyInfo prop)
     {
         var type = prop.PropertyType;
         var dType = prop.GetCustomAttribute<DataTypeAttribute>();
 
-        if (type == typeof(bool))
-            return typeof(InputCheckbox);
+        if (type == typeof(bool?))
+            throw new InvalidOperationException("Nullable bools are not supported, please just use a regular bool");
 
-        if (type == typeof(short))
-            return typeof(InputNumber<short>);
+        if (type is { IsEnum: true, IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            throw new InvalidOperationException("Nullable enums are not supported, please just use a regular enum");
 
-        if (type == typeof(int))
-            return typeof(InputNumber<int>);
+        foreach (var (predicate, componentType) in InputTypes)
+            if (predicate(type, dType?.DataType))
+                return componentType;
 
-        if (type == typeof(long))
-            return typeof(InputNumber<long>);
+        if (type.IsEnum)
+        {
+            if (prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
+                throw new InvalidOperationException("Flags enums are not supported yet");
 
-        if (type == typeof(float))
-            return typeof(InputNumber<float>);
-
-        if (type == typeof(double))
-            return typeof(InputNumber<double>);
-
-        if (type == typeof(decimal))
-            return typeof(InputNumber<decimal>);
-
-        if (type == typeof(string) && dType is { DataType: DataType.MultilineText })
-            return typeof(InputTextArea);
-
-        if (type == typeof(string))
-            return typeof(InputText);
-
-        if (type == typeof(DateTime) && dType is { DataType: DataType.Date })
-            return typeof(InputDate<DateTime>);
-
-        if (type == typeof(DateTime?) && dType is { DataType: DataType.Date })
-            return typeof(InputDate<DateTime?>);
-
-        if (type == typeof(DateTime))
-            return typeof(InputDateTime<DateTime>);
-
-        if (type == typeof(DateTime?))
-            return typeof(InputDateTime<DateTime?>);
-
-        if (type == typeof(DateTimeOffset) && dType is { DataType: DataType.Date })
-            return typeof(InputDate<DateTimeOffset>);
-
-        if (type == typeof(DateTimeOffset?) && dType is { DataType: DataType.Date })
-            return typeof(InputDate<DateTimeOffset?>);
-
-        if (type == typeof(DateTimeOffset))
-            return typeof(InputDateTime<DateTimeOffset>);
-
-        if (type == typeof(DateTimeOffset))
-            return typeof(InputDateTime<DateTimeOffset>);
-
-        // we currently do not support multiple selection enums
-        if (type.IsEnum && !prop.PropertyType.IsDefined(typeof(FlagsAttribute), inherit: true))
             return typeof(InputEnumSelect<>).MakeGenericType(prop.PropertyType);
+        }
 
         return typeof(InputText);
     }
 
-    public static string? GetHtmlInputType(this PropertyInfo prop)
+    private static readonly Dictionary<Func<Type, DataType?, bool>, object?> HtmlTypeAttributes = new()
     {
-        var type = prop.PropertyType;
-        var dType = prop.GetCustomAttribute<DataTypeAttribute>();
+        { (t, _) => t == typeof(bool), "checkbox" },
 
-        if (type == typeof(bool))
-            return "checkbox";
+        { (t, dt) => t == typeof(string) && dt is DataType.Date, "date" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Time, "time" },
+        { (t, dt) => t == typeof(string) && dt is DataType.DateTime, "datetime-local" },
+        { (t, dt) => t == typeof(string) && dt is DataType.EmailAddress, "email" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Password, "password" },
+        { (t, dt) => t == typeof(string) && dt is DataType.PhoneNumber, "tel" },
+        { (t, dt) => t == typeof(string) && dt is DataType.Url or DataType.ImageUrl, "url" },
 
-        if (prop.RangeAttribute() is not null)
-            return "range";
+        { (t, _) => t == typeof(DateTime), InputDateType.DateTimeLocal },
+        { (t, _) => t == typeof(DateTimeOffset), InputDateType.DateTimeLocal },
+        { (t, _) => t == typeof(DateOnly), InputDateType.Date },
+        { (t, _) => t == typeof(TimeOnly), InputDateType.Time },
+    };
 
-        if (type == typeof(string))
-        {
-            return dType?.DataType switch
-            {
-                DataType.Date => "date",
-                DataType.Time => "time",
-                DataType.DateTime => "datetime-local",
-                DataType.EmailAddress => "email",
-                DataType.Password => "password",
-                DataType.PhoneNumber => "tel",
-                DataType.Url or DataType.ImageUrl => "url",
-                DataType.MultilineText => null,
-                _ => null
-            };
-        }
+    internal static object? GetHtmlInputType(this PropertyInfo prop)
+    {
+        var type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+        var dataTypeAttribute = prop.GetCustomAttribute<DataTypeAttribute>();
+
+        // handle custom DataTypes
+        if (dataTypeAttribute?.DataType == DataType.Custom
+            && !string.IsNullOrEmpty(dataTypeAttribute.CustomDataType))
+            return dataTypeAttribute.CustomDataType;
+
+        // handle dates
+        if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly) || type == typeof(TimeOnly))
+            if (prop.GetCustomAttribute<DateTypeAttribute>() is { InputDateType: var inputDateType })
+                return inputDateType;
+
+        // handle other types
+        foreach ((var pred, object? htmlInputType) in HtmlTypeAttributes)
+            if (pred(type, dataTypeAttribute?.DataType))
+                return htmlInputType;
 
         return null;
+    }
+
+    internal static bool IsInitOnly(this PropertyInfo property)
+    {
+        if (!property.CanWrite)
+            return false;
+
+        var setMethod = property.SetMethod;
+        var setMethodReturnParameterModifiers = setMethod?.ReturnParameter.GetRequiredCustomModifiers();
+        return setMethodReturnParameterModifiers?.Contains(typeof(System.Runtime.CompilerServices.IsExternalInit)) ?? false;
     }
 }

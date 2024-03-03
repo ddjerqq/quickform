@@ -1,0 +1,93 @@
+﻿@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private enum Enum
+    {
+        Value1,
+        Value2
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        public string A { get; set; } = default!;
+
+        public bool B { get; set; }
+
+        public int C { get; set; }
+
+        public DateTime D { get; set; }
+
+        public DateTimeOffset E { get; set; }
+
+        public DateOnly F { get; set; }
+
+        public TimeOnly G { get; set; }
+
+        public Enum H { get; set; }
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        @* ReSharper disable once Html.AttributeValueNotResolved *@
+                        <input id:ignoreCase:regex="@IdRegex" autofocus role="switch" type="checkbox" class=""/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus step="any" type="number" value="0"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="datetime-local" class="" value="0001-01-01T00:00:00"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="datetime-local" class="" value="0001-01-01T00:00:00"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="date" class="" value="0001-01-01"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus type="time" class="" value="00:00:00"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <select id:ignoreCase:regex="@IdRegex" autofocus class="" value:regex="[a-zA-Z0-9]+">
+                            <option value:regex="[a-zA-Z0-9]+" diff:ignoreChildren selected></option>
+                            <option value:regex="[a-zA-Z0-9]+" diff:ignoreChildren></option>
+                        </select>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

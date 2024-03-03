@@ -1,0 +1,50 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [Editable(false)]
+        public string A { get; set; } = default!;
+
+        // get only
+        public string B => default!;
+
+        public string C { get; init; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+               <QuickForm Model="model"/>
+             </text>);
+
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus disabled="true" readonly="true"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus disabled="true" readonly="true"/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus disabled="true" readonly="true"/>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

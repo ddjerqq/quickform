@@ -5,7 +5,7 @@
 /// For placeholder text.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class PlaceholderAttribute : Attribute
+public sealed class PlaceholderAttribute : Attribute
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PlaceholderAttribute"/> class.

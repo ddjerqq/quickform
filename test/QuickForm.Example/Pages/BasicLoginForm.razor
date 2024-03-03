@@ -1,0 +1,80 @@
+﻿@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics.CodeAnalysis
+@using QuickForm.Attributes
+
+<QuickForm Model="Model" class="flex flex-col text-white text-start gap-3 w-1/4">
+    <ChildContent>
+        <div class="flex flex-col gap-1">
+            <label for="@context.EditorId" class="font-semibold">
+                @context.DisplayName
+            </label>
+
+            @context.InputComponent("peer rounded-md border-2 bg-gray-100 text-black border-gray-300 dark:border-white p-1")
+
+            @if (!string.IsNullOrEmpty(context.Description))
+            {
+                <span class="font-sm text-gray-500">
+                    @context.Description
+                </span>
+            }
+
+            @if (!string.IsNullOrEmpty(context.ValidFeedback))
+            {
+                <span class="hidden peer-[.valid]:block text-sm text-start text-green-700 font-bold">
+                    @context.ValidFeedback
+                </span>
+            }
+
+            @context.ValidationMessages("hidden peer-[.invalid]:block text-start text-sm text-red-700 font-bold")
+        </div>
+    </ChildContent>
+
+    <SubmitButtonTemplate>
+        <button type="submit" class="border border-green-500 text-green-500 hover:bg-gray-900 hover:border-green-600 hover:text-green-600 font-bold py-2 px-4 rounded">
+            Login
+        </button>
+    </SubmitButtonTemplate>
+</QuickForm>
+
+@code
+{
+    public LoginCommand Model { get; set; } = new();
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public enum FavoriteAnimal
+    {
+        [Display(Name = "😺 cat")]
+        A,
+
+        [Display(Name = "🐶 dog")]
+        B,
+
+        [Display(Name = "🦝 raccoon")]
+        C,
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class LoginCommand
+    {
+        [Required]
+        [Placeholder]
+        [DisplayName("Email Address")]
+        [EmailAddress]
+        [ValidMessage("Looks good!")]
+        [Description("We will never share your email with anyone")]
+        public string EmailAddress { get; set; } = string.Empty;
+
+        [Required]
+        [Placeholder("Enter password...")]
+        [DataType(DataType.Password)]
+        [Description("We will never share your password with anyone")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z]).{8,32}$", ErrorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter...")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [DisplayName("Favorite Animal")]
+        [Description("Please select one")]
+        public FavoriteAnimal FavAnimal { get; set; }
+    }
+}

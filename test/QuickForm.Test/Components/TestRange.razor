@@ -1,0 +1,38 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [DataType("range")]
+        [System.ComponentModel.DataAnnotations.Range(typeof(string), "min", "max")]
+        public string A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form novalidate blazor:onsubmit="1">
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="range" min="min" max="max" autofocus/>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

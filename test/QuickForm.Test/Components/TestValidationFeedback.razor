@@ -1,0 +1,70 @@
+﻿@using QuickForm.Attributes
+@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [ValidMessage("valid message")]
+        public string A { get; set; } = default!;
+
+        [Required(ErrorMessage = "error message")]
+        public string B { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
+                        valid message
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" required autofocus/>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+
+        // act
+        cut.Find("[required]").Change(string.Empty);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
+                        valid message
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" required autofocus aria-invalid="true" class="modified invalid" value=""/>
+                        <div class="validation-message">error message</div>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

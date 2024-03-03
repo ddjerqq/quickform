@@ -1,0 +1,68 @@
+﻿@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [System.ComponentModel.DataAnnotations.Range(typeof(string), "min", "max")]
+        public string A { get; set; } = default!;
+
+        [System.ComponentModel.DataAnnotations.Range(1, 10)]
+        public int B { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Range(1.0f, 10.0f)]
+        public float C { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Range(typeof(string), "2020-01-01", "2023-12-31")]
+        public DateTime D { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Range(typeof(string), "10:00", "12:00")]
+        public TimeOnly E { get; set; }
+    }
+
+    [Test]
+    public void Test()
+    {
+        // arrange
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        // assert
+        cut.MarkupMatches(
+            @<text>
+                <form novalidate blazor:onsubmit="1">
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" min="min" max="max" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" min="1" max="10" step="any" type="number" value="0" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" min="1" max="10" step="any" type="number" value="0" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" min="2020-01-01" max="2023-12-31" type="datetime-local" class="" value="0001-01-01T00:00:00" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" min="10:00" max="12:00" type="time" class="" value="00:00:00" autofocus/>
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

@@ -1,6 +1,14 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickForm", "src\QuickForm\QuickForm.csproj", "{458C3D51-FE68-4186-ABB1-8497B6CD4B5E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{161E8EB0-FFB5-4C3D-B777-28D593B53675}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7C1032DF-644D-4BD8-A684-7282E09398BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickForm.Test", "test\QuickForm.Test\QuickForm.Test.csproj", "{66011632-1778-4228-84EB-C78BA3044ED1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickForm.Example", "test\QuickForm.Example\QuickForm.Example.csproj", "{2BBD6A83-11CE-4F5D-847D-20BCD84EDD8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -11,5 +19,18 @@ Global
 		{458C3D51-FE68-4186-ABB1-8497B6CD4B5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{458C3D51-FE68-4186-ABB1-8497B6CD4B5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{458C3D51-FE68-4186-ABB1-8497B6CD4B5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66011632-1778-4228-84EB-C78BA3044ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66011632-1778-4228-84EB-C78BA3044ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66011632-1778-4228-84EB-C78BA3044ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66011632-1778-4228-84EB-C78BA3044ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BBD6A83-11CE-4F5D-847D-20BCD84EDD8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BBD6A83-11CE-4F5D-847D-20BCD84EDD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BBD6A83-11CE-4F5D-847D-20BCD84EDD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BBD6A83-11CE-4F5D-847D-20BCD84EDD8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{458C3D51-FE68-4186-ABB1-8497B6CD4B5E} = {7C1032DF-644D-4BD8-A684-7282E09398BA}
+		{66011632-1778-4228-84EB-C78BA3044ED1} = {161E8EB0-FFB5-4C3D-B777-28D593B53675}
+		{2BBD6A83-11CE-4F5D-847D-20BCD84EDD8E} = {161E8EB0-FFB5-4C3D-B777-28D593B53675}
 	EndGlobalSection
 EndGlobal

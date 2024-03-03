@@ -1,0 +1,116 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [DataType(DataType.Date)]
+        public string A { get; set; } = default!;
+
+        [DataType(DataType.Time)]
+        public string B { get; set; } = default!;
+
+        [DataType(DataType.DateTime)]
+        public string C { get; set; } = default!;
+
+        [DataType(DataType.EmailAddress)]
+        public string D { get; set; } = default!;
+
+        [DataType(DataType.Password)]
+        public string E { get; set; } = default!;
+
+        [DataType(DataType.PhoneNumber)]
+        public string F { get; set; } = default!;
+
+        [DataType(DataType.Url)]
+        public string G { get; set; } = default!;
+
+        [DataType(DataType.MultilineText)]
+        public string H { get; set; } = default!;
+
+        [DataType("custom")]
+        public string I { get; set; } = default!;
+
+        [DataType("search")]
+        public string J { get; set; } = default!;
+
+        [DataType("hidden")]
+        public string K { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                <QuickForm Model="model"/>
+             </text>);
+
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes>
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="date" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="time" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="datetime-local" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="email" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="password" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="tel" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="url" autofocus/>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <textarea id:ignoreCase:regex="@IdRegex" autofocus></textarea>
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        @* ReSharper disable once Html.AttributeValueNotResolved *@
+                        <input id:ignoreCase:regex="@IdRegex" type="custom" autofocus />
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="search" autofocus />
+                    </div>
+
+                    <div>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
+                        <input id:ignoreCase:regex="@IdRegex" type="hidden" autofocus />
+                    </div>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}
