@@ -2,13 +2,8 @@
 @inherits QuickForm<TEntity>
 
 @{
-    AdditionalAttributes ??= new Dictionary<string, object>
-    {
-        {
-            "class",
-            "d-flex flex-column text-white text-start gap-3 rounded border p-3 bg-dark"
-        }
-    };
+    AdditionalAttributes ??= new Dictionary<string, object>();
+    AdditionalAttributes.Add("class", "d-flex flex-column text-white text-start gap-3 rounded border p-3 bg-dark");
 
     ChildContent = context =>
         @<div class="d-flex flex-column">

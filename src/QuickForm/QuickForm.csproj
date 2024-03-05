@@ -1,24 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
         <Title>QuickForm</Title>
         <Authors>ddjerqq</Authors>
-        <Description>The QuickForm component is a Razor component for quickly and efficiently generating HTML forms.
-            QuickForm provides a simple and convenient form component for common form rendering scenarios,
-            while having high customization options with data annotations attributes, and two validation schemes:
-            FluentValidation and DataAnnotationValidations.
-        </Description>
-        <RepositoryUrl>https://github.com/ddjerqq/QuickForm</RepositoryUrl>
+        <Description>QuickForm is a blazor component which allows quick creation of downright gorgeous HTML forms with minimal effort.</Description>
+        <RepositoryUrl>https://github.com/ddjerqq/quickform</RepositoryUrl>
         <RepositoryType>GIT</RepositoryType>
         <PackageTags>aspnetcore, components, blazor, forms</PackageTags>
         <PackageIcon>quickform-icon.png</PackageIcon>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Version>2.0.0</Version>
+        <Version>2.0.1</Version>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -32,7 +28,6 @@
 
     <ItemGroup>
         <PackageReference Include="Blazored.FluentValidation" Version="2.1.0"/>
-        <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     </ItemGroup>
 
     <ItemGroup>

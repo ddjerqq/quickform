@@ -82,7 +82,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
 
     private CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = default!;
 
-    private List<QuickFormField<TEntity>> Fields { get; set; } = [];
+    private List<QuickFormField<TEntity>> Fields { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the &lt;see cref="EditContext"/&gt; instance explicitly associated with this model

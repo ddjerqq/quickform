@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Humanizer;
 using Microsoft.AspNetCore.Components.Forms;
 using QuickForm.Attributes;
 using QuickForm.Components;
@@ -38,7 +37,7 @@ internal static class PropertyInfoExtensions
 
         displayName ??= prop.GetCustomAttribute<DisplayAttribute>()?.GetName();
         displayName ??= prop.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
-        displayName ??= prop.Name.Humanize();
+        displayName ??= prop.Name;
 
         return displayName;
     }
@@ -170,14 +169,14 @@ internal static class PropertyInfoExtensions
                 return inputDateType;
 
         // handle other types
-        foreach ((var pred, object? htmlInputType) in HtmlTypeAttributes)
+        foreach (var (pred, htmlInputType) in HtmlTypeAttributes)
             if (pred(type, dataTypeAttribute?.DataType))
                 return htmlInputType;
 
         return null;
     }
 
-    internal static bool IsInitOnly(this PropertyInfo property)
+    private static bool IsInitOnly(this PropertyInfo property)
     {
         if (!property.CanWrite)
             return false;

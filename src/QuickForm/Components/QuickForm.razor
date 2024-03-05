@@ -5,7 +5,7 @@
 
 <EditForm EditContext="EditContext"
           OnSubmit="@OnSubmit" OnInvalidSubmit="@OnInvalidSubmit" OnValidSubmit="@OnValidSubmit"
-          AdditionalAttributes="AdditionalAttributes?.AsReadOnly()">
+          AdditionalAttributes="@(AdditionalAttributes as IReadOnlyDictionary<string, object>)">
     <DataAnnotationsValidator/>
     <FluentValidationValidator/>
 
