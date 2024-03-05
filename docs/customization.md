@@ -122,15 +122,3 @@ You can now use your component all around your application!
 Here is what a minimally styled TailwindCSS form looks like:
 
 ![your custom form](images/customized-form.png)
-
----
-
-# Next steps
-
-<div class="grid cards" markdown>
-
-
-- :octicons-check-24: [Check out validation](../validation)
-- :material-format-font: [Check out the attributes](../attributes)
-
-</div>
