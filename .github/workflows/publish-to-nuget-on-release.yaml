@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4.0.0
 
       - name: Pack 📦
-        run: dotnet pack --configuration Release --output .
+        run: dotnet pack src/QuickForm --configuration Release --output .
 
       - name: Add Github to NuGet Source 🔑
         run: dotnet nuget add source --store-password-in-clear-text --username ddjerqq --password ${{ secrets.NUGET_GITHUB_APIKEY }} --name github "https://nuget.pkg.github.com/ddjerqq/index.json"
