@@ -32,6 +32,11 @@ title: Attributes
 | `DataType.PhoneNumber`                | `tel`               |
 | `DataType.Url` or `DataType.ImageUrl` | `url`               |
 | `DataType.MultilineText`              | `null`              |
+| `DataType("custom")`                  | `custom`            |
+
+!!! info "Custom data types"
+
+    Custom data types are useful for `hidden`, `search`, or other relatively-rare input types.
 
 ## DateTypes
 

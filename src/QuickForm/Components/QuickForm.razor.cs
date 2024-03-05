@@ -33,7 +33,12 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Gets or sets the template for the fields in this form.
     /// </summary>
     [Parameter]
-    public virtual RenderFragment<IQuickFormField> ChildContent { get; set; } = default!;
+    public virtual RenderFragment<IQuickFormField> ChildContent { get; set; } = ctx => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddContent(1, "You must provide ChildContent unless you are using a custom form template.");
+        builder.CloseElement();
+    };
 
     /// <summary>
     /// Gets or sets the submit button template of the form.

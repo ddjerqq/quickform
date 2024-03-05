@@ -3,12 +3,13 @@ using AngleSharp.Html.Parser;
 using Bunit;
 using Bunit.Diffing;
 using NUnit.Framework;
+using TestContext = Bunit.TestContext;
 
 namespace QuickForm.Test;
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-public class BaseTest : Bunit.TestContext
+public class BaseTest : TestContext
 {
     private static readonly HtmlParser HtmlParser = new();
 

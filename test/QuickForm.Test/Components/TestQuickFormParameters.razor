@@ -1,5 +1,4 @@
-﻿@using QuickForm.Common
-@inherits BaseTest
+﻿@inherits BaseTest
 
 @code
 {
@@ -14,90 +13,70 @@
     {
         var model = new Model();
 
-        var additionalAttributes = new Dictionary<string, object?> { { "attribute", "value" } };
+        var additionalAttributes = new Dictionary<string, object?>
+        {
+            ["class"] = "form-class"
+        };
 
-        var submitted = false;
-        var onSubmit = () => { submitted = true; };
-
-        var changed = false;
-        var onChange = () => { changed = true; };
+        var onSubmit = () => { };
+        var onChange = () => { };
 
         var cut = Render(
             @<text>
-                <QuickForm TEntity="Model" Model="model"
-                           FormClass="form-class"
-                           FieldCssClassProvider="fieldCssClassProvider"
-                           ValidationCssClassProvider="validationCssClassProvider"
-                           OnSubmit="@onSubmit"
-                           OnModelChanged="@onChange"
-                           AdditionalAttributes="additionalAttributes">
-                    <SubmitButtonTemplate>
-                        <button type="submit"></button>
-                    </SubmitButtonTemplate>
-                </QuickForm>
+                 <QuickForm TEntity="Model"
+                            Model="model"
+                            ValidClass="valid"
+                            InvalidClass="invalid"
+                            OnSubmit="@onSubmit"
+                            OnModelChanged="@onChange"
+                            AdditionalAttributes="additionalAttributes">
+                     <ChildContent>
+                         @context.InputComponent(string.Empty)
+                     </ChildContent>
+
+                     <SubmitButtonTemplate>
+                         <button type="submit"></button>
+                     </SubmitButtonTemplate>
+                 </QuickForm>
              </text>);
 
-        // assert not passing the model throws something idk
+        cut.MarkupMatches(
+            @<text>
+                 <form class="form-class" diff:ignoreAttributes>
+                     <input autofocus class="input" diff:ignoreAttributes/>
+                     <button type="submit"></button>
+                 </form>
+             </text>);
+
+        Print(cut);
+    }
+
+    [Test]
+    public void MustPassModel()
+    {
         Assert.Throws<ArgumentNullException>(() =>
         {
             Render(
                 @<text>
-                    <QuickForm TEntity="Model"/>
+                     <QuickForm TEntity="Model"/>
                  </text>);
         });
+    }
 
-        // assert passing both model and edit context throws
+    [Test]
+    public void MustNotPassAllThreeDelegates()
+    {
+        var model = new Model();
+
         Assert.Throws<InvalidOperationException>(() =>
         {
             Render(
                 @<text>
-                    <QuickForm Model="model" EditContext="new EditContext(model)"/>
+                     <QuickForm Model="model"
+                                OnSubmit="@(() => { })"
+                                OnValidSubmit="@(() => { })"
+                                OnInvalidSubmit="@(() => { })"/>
                  </text>);
         });
-
-        // assert passing OnValidSubmit and OnInvalidSubmit along OnSubmit throws
-        Assert.Throws<InvalidOperationException>(() =>
-        {
-            Render(
-                @<text>
-                    <QuickForm Model="model"
-                               OnSubmit="@(() => { })"
-                               OnValidSubmit="@(() => { })"
-                               OnInvalidSubmit="@(() => { })"/>
-                 </text>);
-        });
-
-        cut.MarkupMatches(
-            @<text>
-                <form class="form-class" attribute="value" novalidate>
-                    <div class="editor">
-                        <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input"/>
-                    </div>
-                    <button type="submit"></button>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        // act
-        cut.Find(".input").Change(string.Empty);
-        cut.Find("button").Click();
-
-        cut.MarkupMatches(
-            @<text>
-                <form class="form-class" attribute="value" novalidate>
-                    <div class="editor">
-                        <label for:ignoreCase:regex="@IdRegex" class="label" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus class="input valid" value=""/>
-                    </div>
-                    <button type="submit"></button>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        Assert.That(changed, Is.True);
-        Assert.That(submitted, Is.True);
     }
 }

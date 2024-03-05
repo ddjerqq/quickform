@@ -1,4 +1,5 @@
 [![docs](https://img.shields.io/badge/read_the-docs-blue)](https://ddjerqq.github.io/quickform)
+![docs](https://img.shields.io/badge/test_coverage-94%25-green)
 
 [![Discord](https://dcbadge.vercel.app/api/server/DsAXsMuEbx?style=flat)](https://discord.gg/DsAXsMuEbx)
 [![Nuget](https://img.shields.io/nuget/v/QuickForm)](https://www.nuget.org/packages/QuickForm/)

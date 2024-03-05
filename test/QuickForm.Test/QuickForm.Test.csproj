@@ -5,22 +5,22 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <ProjectReference Include="..\..\src\QuickForm\QuickForm.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="bunit" Version="1.27.17" />
+        <PackageReference Include="bunit" Version="1.27.17"/>
         <PackageReference Include="FluentAssertions" Version="6.12.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-        <PackageReference Include="NUnit" Version="4.1.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0"/>
+        <PackageReference Include="NUnit" Version="4.1.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="4.5.0"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <UpToDateCheckInput Remove="Components\Bootstrap\TestBootstrapQuickForm.razor" />
+        <UpToDateCheckInput Remove="Components\Bootstrap\TestBootstrapQuickForm.razor"/>
     </ItemGroup>
-    
+
 </Project>

@@ -1,0 +1,37 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inherits BaseTest
+
+@code
+{
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    private class Model
+    {
+        [Required]
+        public string A { get; set; } = default!;
+    }
+
+    [Test]
+    public void Test()
+    {
+        var model = new Model();
+
+        var cut = Render(
+            @<text>
+                 <TwQuickForm Model="model" />
+             </text>);
+
+        cut.MarkupMatches(
+            @<text>
+                <form diff:ignoreAttributes >
+                    <div diff:ignoreAttributes>
+                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreAttributes>A</label>
+                        <input id:ignoreCase:regex="@IdRegex" diff:ignoreAttributes>
+                    </div>
+
+                    <button type="submit" diff:ignoreAttributes>submit</button>
+                </form>
+             </text>);
+
+        Print(cut);
+    }
+}

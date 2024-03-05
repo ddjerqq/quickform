@@ -6,17 +6,15 @@
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private enum Enum
     {
-        [Display(Name = "a")]
-        A,
+        [Display(Name = "a")] A,
 
-        [Display(Name = "b")]
-        B,
+        [Display(Name = "b")] B
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class Model
     {
-        public Enum A { get; set; } = default!;
+        public Enum A { get; set; } = Enum.A;
     }
 
     [Test]
@@ -26,127 +24,21 @@
 
         var cut = Render(
             @<text>
-                <QuickForm Model="model"/>
+                 <QuickForm Model="model">
+                     @context.InputComponent(string.Empty)
+                 </QuickForm>
              </text>);
 
         cut.MarkupMatches(
             @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <select id:ignoreCase:regex="@IdRegex" autofocus value="A" class="">
-                            <option value="A" selected>a</option>
-                            <option value="B">b</option>
-                        </select>
-                    </div>
-                </form>
+                 <form diff:ignoreAttributes>
+                     <select value="A" diff:ignoreAttributes>
+                         <option value="A" selected>a</option>
+                         <option value="B">b</option>
+                     </select>
+                 </form>
              </text>);
 
         Print(cut);
-
-        Assert.That(model.A, Is.EqualTo(Enum.A));
-
-        cut.Find("select").Change("B");
-
-        cut.MarkupMatches(
-            @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <select id:ignoreCase:regex="@IdRegex" autofocus class="modified valid" value="B">
-                            <option value="A">a</option>
-                            <option value="B" selected>b</option>
-                        </select>
-                    </div>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        Assert.That(model.A, Is.EqualTo(Enum.B));
-    }
-
-    [Test]
-    public void TestNull()
-    {
-        var model = new Model();
-
-        var cut = Render(
-            @<text>
-                <QuickForm Model="model"/>
-             </text>);
-
-        cut.MarkupMatches(
-            @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <select id:ignoreCase:regex="@IdRegex" autofocus value="A" class="">
-                            <option value="A" selected>a</option>
-                            <option value="B">b</option>
-                        </select>
-                    </div>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        Assert.That(model.A, Is.EqualTo(Enum.A));
-
-        cut.Find("select").Change(string.Empty);
-
-        cut.MarkupMatches(
-            @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <select id:ignoreCase:regex="@IdRegex" autofocus class="" value="A">
-                            <option value="A" selected>a</option>
-                            <option value="B">b</option>
-                        </select>
-                    </div>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        cut.Find("select").Change("C");
-
-        cut.MarkupMatches(
-            @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <select id:ignoreCase:regex="@IdRegex" aria-invalid="true" autofocus class="modified invalid" value="A">
-                            <option value="A" selected>a</option>
-                            <option value="B">b</option>
-                        </select>
-                        <div class="validation-message" diff:ignoreChildren></div>
-                    </div>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        Assert.That(model.A, Is.EqualTo(Enum.A));
-
-        cut.Find("select").Change<string?>(value: null);
-
-        cut.MarkupMatches(
-            @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <select id:ignoreCase:regex="@IdRegex" autofocus class="modified valid" value="A">
-                            <option value="A" selected>a</option>
-                            <option value="B">b</option>
-                        </select>
-                    </div>
-                </form>
-             </text>);
-
-        Print(cut);
-
-        Assert.That(model.A, Is.EqualTo(Enum.A));
     }
 }

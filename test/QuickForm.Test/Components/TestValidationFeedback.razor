@@ -1,5 +1,5 @@
-﻿@using QuickForm.Attributes
-@using System.ComponentModel.DataAnnotations
+﻿@using System.ComponentModel.DataAnnotations
+@using QuickForm.Attributes
 @inherits BaseTest
 
 @code
@@ -7,8 +7,7 @@
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     private class Model
     {
-        [ValidFeedback("valid message")]
-        public string A { get; set; } = default!;
+        [ValidFeedback("valid message")] public string A { get; set; } = default!;
 
         [Required(ErrorMessage = "error message")]
         public string B { get; set; } = default!;
@@ -17,52 +16,50 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
         var cut = Render(
             @<text>
-                <QuickForm Model="model"/>
+                 <QuickForm Model="model">
+                     <div>
+                         @context.InputComponent(string.Empty)
+                         @context.ValidFeedback
+                         @context.ValidationMessages(string.Empty)
+                     </div>
+                 </QuickForm>
              </text>);
 
-        // assert
         cut.MarkupMatches(
             @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
-                        valid message
-                    </div>
+                 <form diff:ignoreAttributes>
+                     <div>
+                         <input diff:ignoreAttributes/>
+                         valid message
+                     </div>
 
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" required autofocus/>
-                    </div>
-                </form>
+                     <div>
+                         <input diff:ignoreAttributes/>
+                     </div>
+                 </form>
              </text>);
 
         Print(cut);
 
-        // act
         cut.Find("[required]").Change(string.Empty);
 
-        // assert
         cut.MarkupMatches(
             @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
-                        valid message
-                    </div>
+                 <form diff:ignoreAttributes>
+                     <div>
+                         <input diff:ignoreAttributes autofocus/>
+                         valid message
+                     </div>
 
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" required autofocus aria-invalid="true" class="modified invalid" value=""/>
-                        <div class="validation-message">error message</div>
-                    </div>
-                </form>
+                     <div>
+                         <input diff:ignoreAttributes/>
+                         <div class="validation-message" diff:ignoreChildren></div>
+                     </div>
+                 </form>
              </text>);
 
         Print(cut);

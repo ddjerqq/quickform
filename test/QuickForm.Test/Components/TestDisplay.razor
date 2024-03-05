@@ -1,5 +1,5 @@
-﻿@using System.ComponentModel.DataAnnotations
-@using System.ComponentModel
+﻿@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
 @inherits BaseTest
 
 @code
@@ -22,28 +22,27 @@
 
         var cut = Render(
             @<text>
-                <QuickForm Model="model"/>
+                 <QuickForm Model="model">
+                     <div>
+                         <label>@context.DisplayName</label>
+                         <description>@context.Description</description>
+                     </div>
+                 </QuickForm>
              </text>);
 
         cut.MarkupMatches(
             @<text>
-                <form diff:ignoreAttributes>
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex">
-                            name
-                        </label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
-                        description
-                    </div>
+                 <form diff:ignoreAttributes>
+                     <div>
+                         <label>name</label>
+                         <description>description</description>
+                     </div>
 
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren>
-                            name
-                        </label>
-                        <input id:ignoreCase:regex="@IdRegex" autofocus/>
-                        description
-                    </div>
-                </form>
+                     <div>
+                         <label>name</label>
+                         <description>description</description>
+                     </div>
+                 </form>
              </text>);
 
         Print(cut);

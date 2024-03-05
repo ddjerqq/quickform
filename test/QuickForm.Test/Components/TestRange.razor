@@ -14,23 +14,20 @@
     [Test]
     public void Test()
     {
-        // arrange
         var model = new Model();
 
         var cut = Render(
             @<text>
-                <QuickForm Model="model"/>
+                 <QuickForm Model="model">
+                     @context.InputComponent(string.Empty)
+                 </QuickForm>
              </text>);
 
-        // assert
         cut.MarkupMatches(
             @<text>
-                <form novalidate blazor:onsubmit="1">
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" type="range" min="min" max="max" autofocus/>
-                    </div>
-                </form>
+                 <form diff:ignoreAttributes>
+                     <input diff:ignoreAttributes type="range" min="min" max="max"/>
+                 </form>
              </text>);
 
         Print(cut);

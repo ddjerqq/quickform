@@ -21,7 +21,9 @@
         {
             Render(
                 @<text>
-                    <QuickForm Model="model"/>
+                     <QuickForm Model="model">
+                         @context.InputComponent(string.Empty)
+                     </QuickForm>
                  </text>);
         });
     }

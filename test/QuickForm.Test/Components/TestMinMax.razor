@@ -29,38 +29,21 @@
 
         var cut = Render(
             @<text>
-                <QuickForm Model="model"/>
+                 <QuickForm Model="model">
+                     @context.InputComponent(string.Empty)
+                 </QuickForm>
              </text>);
 
         // assert
         cut.MarkupMatches(
             @<text>
-                <form novalidate blazor:onsubmit="1">
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" min="min" max="max" autofocus/>
-                    </div>
-
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" min="1" max="10" step="any" type="number" value="0" autofocus/>
-                    </div>
-
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" min="1" max="10" step="any" type="number" value="0" autofocus/>
-                    </div>
-
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" min="2020-01-01" max="2023-12-31" type="datetime-local" class="" value="0001-01-01T00:00:00" autofocus/>
-                    </div>
-
-                    <div>
-                        <label for:ignoreCase:regex="@IdRegex" diff:ignoreChildren></label>
-                        <input id:ignoreCase:regex="@IdRegex" min="10:00" max="12:00" type="time" class="" value="00:00:00" autofocus/>
-                    </div>
-                </form>
+                 <form diff:ignoreAttributes>
+                     <input min="min" max="max" diff:ignoreAttributes/>
+                     <input min="1" max="10" step="any" type="number" value="0" diff:ignoreAttributes/>
+                     <input min="1" max="10" step="any" type="number" value="0" diff:ignoreAttributes/>
+                     <input min="2020-01-01" max="2023-12-31" type="datetime-local" value="0001-01-01T00:00:00" diff:ignoreAttributes/>
+                     <input min="10:00" max="12:00" type="time" value="00:00:00" diff:ignoreAttributes/>
+                 </form>
              </text>);
 
         Print(cut);

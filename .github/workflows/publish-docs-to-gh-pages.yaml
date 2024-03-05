@@ -5,9 +5,28 @@ on:
     branches: [ "master" ]
 
 jobs:
+  test:
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4.0.0
+
+      - name: Load Cache 📦
+        uses: actions/cache@v2
+        with:
+          key: ${{ github.ref }}
+          path: .cache/test
+
+      - name: Test 🧪
+        run: dotnet test --verbosity normal
+
+
   build-and-publish-docs:
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
+    needs: test
 
     permissions:
       contents: write
@@ -25,7 +44,7 @@ jobs:
         uses: actions/cache@v2
         with:
           key: ${{ github.ref }}
-          path: .cache
+          path: .cache/docs
 
       - name: Install Python mkdocs-material 🐍
         run: pip install mkdocs-material
