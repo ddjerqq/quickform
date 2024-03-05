@@ -8,234 +8,241 @@ and DataAnnotations (using the built-in `DataAnnotationValidator` component).
 
 ---
 
+[//]: # (```csharp title="hello" linenums="1" hl_lines="2 3")
+[//]: # (@code )
+[//]: # ({)
+[//]: # (    private string message = "Hello, world!";)
+[//]: # (})
+[//]: # (```)
+
 ## Package
 
 Add a package reference for the [`QuickForm`](https://www.nuget.org/packages/QuickForm) package.
 You can also use the .NET CLI to add the package reference
 with: [`dotnet add package` command](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-add-package).
 
-[//]: # (---)
+---
 
-[//]: # (## Implementation)
+## Implementation
 
-[//]: # ()
-[//]: # (To implement the `QuickForm` component:)
 
-[//]: # ()
-[//]: # (1. Specify tag for the `QuickForm` component in Razor markup &#40;`<QuickForm />`&#41;.)
+To implement the `QuickForm` component:
 
-[//]: # (2. Use the following Parameters:)
 
-[//]: # (    * `T Model`: supply a value for which you want to generate the form for.)
+1. Specify tag for the `QuickForm` component in Razor markup (`<QuickForm />`).
 
-[//]: # (    * `OnModelChange?`: An optional event callback that's invoked when the model changes.)
+2. Use the following Parameters:
 
-[//]: # (    * `OnValidSubmit?`: An optional event callback that's invoked when the form is submitted and passes validation.)
+    * `T Model`: supply a value for which you want to generate the form for.
 
-[//]: # (3. ***Done***! your quick form is set up in ***one line of code***!)
+    * `OnModelChange?`: An optional event callback that's invoked when the model changes.
 
-[//]: # (---)
+    * `OnValidSubmit?`: An optional event callback that's invoked when the form is submitted and passes validation.
 
-[//]: # (## Basic usage)
+3. ***Done***! your quick form is set up in ***one line of code***!
 
-[//]: # ()
-[//]: # (Start by add the following using statement to your root `_Imports.razor` or anywhere inside your component)
+---
 
-[//]: # ()
-[//]: # (```razor)
+## Basic usage
 
-[//]: # (@using QuickForm.Components)
 
-[//]: # (```)
+Start by add the following using statement to your root `_Imports.razor` or anywhere inside your component
 
-[//]: # ()
-[//]: # (Here is a very basic form:)
 
-[//]: # ()
-[//]: # ([BasicForm.razor]&#40;./samples/BasicForm.razor&#41;:)
+```razor
 
-[//]: # ()
-[//]: # (```razor)
+@using QuickForm.Components
 
-[//]: # (@using QuickForm.Components)
+```
 
-[//]: # ()
-[//]: # (<QuickForm Model="Model" />)
 
-[//]: # ()
-[//]: # (@code {)
+Here is a very basic form:
 
-[//]: # (    )
-[//]: # (    public LoginCommand Model { get; set; } = new LoginCommand&#40;&#41;;)
 
-[//]: # (    )
-[//]: # (})
+[BasicForm.razor](./samples/BasicForm.razor):
 
-[//]: # (```)
 
-[//]: # ()
-[//]: # (```csharp)
+```razor
 
-[//]: # (public class LoginCommand)
+@using QuickForm.Components
 
-[//]: # ({)
 
-[//]: # (    public string Email { get; set; })
+<QuickForm Model="Model" />
 
-[//]: # ()
-[//]: # (    public string Password { get; set; })
 
-[//]: # (})
+@code {
 
-[//]: # (```)
+    
+    public LoginCommand Model { get; set; } = new LoginCommand();
 
-[//]: # ()
-[//]: # (![BasicForm.png]&#40;https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/BasicForm.razor.png&#41;)
+    
+}
 
-[//]: # ()
-[//]: # (---)
+```
 
-[//]: # ()
-[//]: # (We can customize the properties and the generated fields, with data annotation attributes:)
 
-[//]: # ()
-[//]: # ([CustomizedBasicForm.razor]&#40;./samples/CustomizedBasicForm.razor&#41;:)
+```csharp
 
-[//]: # ()
-[//]: # (```razor)
+public class LoginCommand
 
-[//]: # (@using QuickForm.Components)
+{
 
-[//]: # ()
-[//]: # (<QuickForm Model="Model" />)
+    public string Email { get; set; }
 
-[//]: # ()
-[//]: # (@code {)
 
-[//]: # ()
-[//]: # (    public LoginCommand Model { get; set; } = new LoginCommand&#40;&#41;;)
+    public string Password { get; set; }
 
-[//]: # ()
-[//]: # (})
+}
 
-[//]: # (```)
+```
 
-[//]: # ()
-[//]: # (```csharp)
 
-[//]: # (using QuickForm.Attributes;)
+![BasicForm.png](https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/BasicForm.razor.png)
 
-[//]: # ()
-[//]: # (public class LoginCommand)
 
-[//]: # ({)
+---
 
-[//]: # (    [Required])
 
-[//]: # (    [Placeholder])
+We can customize the properties and the generated fields, with data annotation attributes:
 
-[//]: # (    [DisplayName&#40;"Email Address"&#41;])
 
-[//]: # (    [EmailAddress])
+[CustomizedBasicForm.razor](./samples/CustomizedBasicForm.razor):
 
-[//]: # (    public string Email { get; set; })
 
-[//]: # ()
-[//]: # (    [Required])
+```razor
 
-[//]: # (    [Placeholder&#40;"Enter password..."&#41;])
+@using QuickForm.Components
 
-[//]: # (    [DataType&#40;DataType.Password&#41;])
 
-[//]: # (    [Description&#40;"Password must have at least 8 characters, one uppercase letter, one lowercase letter ..."&#41;])
+<QuickForm Model="Model" />
 
-[//]: # (    [RegularExpression&#40;@"^&#40;?=.*[a-z]&#41;&#40;?=.*[A-Z]&#41;.{8,32}$", ErrorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter ..."&#41;])
 
-[//]: # (    public string Password { get; set; })
+@code {
 
-[//]: # (})
 
-[//]: # (```)
+    public LoginCommand Model { get; set; } = new LoginCommand();
 
-[//]: # ()
-[//]: # (![CustomizedBasicForm_before_validation.png]&#40;https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/CustomizedBasicForm.razor_before_validation.png&#41;)
 
-[//]: # ()
-[//]: # (![CustomizedBasicForm_after_validation.png]&#40;https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/CustomizedBasicForm.razor_after_validation.png&#41;)
+}
 
-[//]: # ()
-[//]: # (---)
+```
 
-[//]: # ()
-[//]: # (## Full list of supported DataAnnotations to customize the generated forms)
 
-[//]: # ()
-[//]: # (| Attribute       | Description                                                                                         | Input tag modification                                                                                                               |)
+```csharp
 
-[//]: # (|-----------------|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|)
+using QuickForm.Attributes;
 
-[//]: # (| `[Required]`    | Specifies that a data field value is required.                                                      | Adds required attribute and a red * to the form.                                                                                     |)
 
-[//]: # (| `[Editable]`    | Specifies whether or not the field should be editable.                                              | Adds disabled and readonly attributes to the input, as well as removing the event callbacks for when the value changes               |)
+public class LoginCommand
 
-[//]: # (| `[NotMapped]`   | Specifies that the property should be skipped during form generation                                | -                                                                                                                                    |)
+{
 
-[//]: # (| `[Display]`     | Specifies the DisplayName and the Description from on attribute                                     | Adds the `DisplayName` as the label of the field and `Description` after the field as muted text &#40;if any&#41;.                           |)
+    [Required]
 
-[//]: # (| `[DisplayName]` | Specifies the DisplayName of the field, this is similar to `[Display]`. This also works on Enums    | Overrides the label of the field with the provided value                                                                             |)
+    [Placeholder]
 
-[//]: # (| `[Description]` | Specifies the Description of the field, this is similar to `[Display]`                              | Adds the provided value after the field as muted text                                                                                |)
+    [DisplayName("Email Address")]
 
-[//]: # (| `[Placeholder]` | Specifies the Placeholder of the field, default placeholder text is "Please enter {DisplayName}..." | Adds the provided value as the placeholder of the field                                                                              |)
+    [EmailAddress]
 
-[//]: # (| `[DataList]`    | Specifies the DataList for the field, the data list be must be defined in the document              | Adds the provided value as the placeholder of the field                                                                              |)
+    public string Email { get; set; }
 
-[//]: # (| `[DataType]`    | Specifies the DataType of the field. See supported DataTypes below.                                 | Adds the appropriate value as the type attribute of the input field                                                                  |)
 
-[//]: # (| `[Range]`       | Specifies the range of values for a numeric field.                                                  | Adds the appropriate value as the min and max attributes of the input field, and transforms this input into a bootstrap Slider Range |)
+    [Required]
 
-[//]: # ()
-[//]: # (### Supported DataTypes and their appropriate html type attributes:)
+    [Placeholder("Enter password...")]
 
-[//]: # ()
-[//]: # (* `DataType.Date` => `"date"`)
+    [DataType(DataType.Password)]
 
-[//]: # (* `DataType.Time` => `"time"`)
+    [Description("Password must have at least 8 characters, one uppercase letter, one lowercase letter ...")]
 
-[//]: # (* `DataType.DateTime` => `"datetime-local"`)
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z]).{8,32}$", ErrorMessage = "Password must have at least 8 characters, one uppercase letter, one lowercase letter ...")]
 
-[//]: # (* `DataType.EmailAddress` => `"email"`)
+    public string Password { get; set; }
 
-[//]: # (* `DataType.Password` => `"password"`)
+}
 
-[//]: # (* `DataType.PhoneNumber` => `"tel"`)
+```
 
-[//]: # (* `DataType.Url` or `DataType.ImageUrl` => `"url"`)
 
-[//]: # (* `DataType.MultilineText` => `null`)
+![CustomizedBasicForm_before_validation.png](https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/CustomizedBasicForm.razor_before_validation.png)
 
-[//]: # ()
-[//]: # (---)
 
-[//]: # ()
-[//]: # (There aren't current plans to extend `QuickForm` with features that full-blown commercial form generators tend to offer,)
+![CustomizedBasicForm_after_validation.png](https://raw.githubusercontent.com/ddjerqq/QuickForm/master/assets/CustomizedBasicForm.razor_after_validation.png)
 
-[//]: # (for example, bootstrap input groups, color pickers, hierarchical dropdowns, etc.)
 
-[//]: # (However, if you think that a certain feature would make sense in this component, feel free to open an issue on github)
+---
 
-[//]: # (or even a Pull Request, it would be massively appreciated!)
 
-[//]: # ()
-[//]: # (---)
+## Full list of supported DataAnnotations to customize the generated forms
 
-[//]: # ()
-[//]: # (Thank you for using QuickForm!)
 
-[//]: # ()
-[//]: # (Thank you Anton from [Raw Coding]&#40;https://www.youtube.com/@RawCoding&#41; for inspiration about expressions.)
+| Attribute       | Description                                                                                         | Input tag modification                                                                                                               |
 
-[//]: # ()
-[//]: # (Thank you [meziantou]&#40;https://github.com/meziantou&#41; for [this amazing article]&#40;https://www.meziantou.net/automatically-generate-a-form-from-an-object-in-blazor.htm&#41; which inspired to me create this repo.)
+|-----------------|-----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 
-[//]: # ( )
+| `[Required]`    | Specifies that a data field value is required.                                                      | Adds required attribute and a red * to the form.                                                                                     |
+
+| `[Editable]`    | Specifies whether or not the field should be editable.                                              | Adds disabled and readonly attributes to the input, as well as removing the event callbacks for when the value changes               |
+
+| `[NotMapped]`   | Specifies that the property should be skipped during form generation                                | -                                                                                                                                    |
+
+| `[Display]`     | Specifies the DisplayName and the Description from on attribute                                     | Adds the `DisplayName` as the label of the field and `Description` after the field as muted text (if any).                           |
+
+| `[DisplayName]` | Specifies the DisplayName of the field, this is similar to `[Display]`. This also works on Enums    | Overrides the label of the field with the provided value                                                                             |
+
+| `[Description]` | Specifies the Description of the field, this is similar to `[Display]`                              | Adds the provided value after the field as muted text                                                                                |
+
+| `[Placeholder]` | Specifies the Placeholder of the field, default placeholder text is "Please enter {DisplayName}..." | Adds the provided value as the placeholder of the field                                                                              |
+
+| `[DataList]`    | Specifies the DataList for the field, the data list be must be defined in the document              | Adds the provided value as the placeholder of the field                                                                              |
+
+| `[DataType]`    | Specifies the DataType of the field. See supported DataTypes below.                                 | Adds the appropriate value as the type attribute of the input field                                                                  |
+
+| `[Range]`       | Specifies the range of values for a numeric field.                                                  | Adds the appropriate value as the min and max attributes of the input field, and transforms this input into a bootstrap Slider Range |
+
+
+### Supported DataTypes and their appropriate html type attributes:
+
+
+* `DataType.Date` => `"date"`
+
+* `DataType.Time` => `"time"`
+
+* `DataType.DateTime` => `"datetime-local"`
+
+* `DataType.EmailAddress` => `"email"`
+
+* `DataType.Password` => `"password"`
+
+* `DataType.PhoneNumber` => `"tel"`
+
+* `DataType.Url` or `DataType.ImageUrl` => `"url"`
+
+* `DataType.MultilineText` => `null`
+
+
+---
+
+
+There aren't current plans to extend `QuickForm` with features that full-blown commercial form generators tend to offer,
+
+for example, bootstrap input groups, color pickers, hierarchical dropdowns, etc.
+
+However, if you think that a certain feature would make sense in this component, feel free to open an issue on github
+
+or even a Pull Request, it would be massively appreciated!
+
+
+---
+
+
+Thank you for using QuickForm!
+
+
+Thank you Anton from [Raw Coding](https://www.youtube.com/@RawCoding) for inspiration about expressions.
+
+
+Thank you [meziantou](https://github.com/meziantou) for [this amazing article](https://www.meziantou.net/automatically-generate-a-form-from-an-object-in-blazor.htm) which inspired to me create this repo.
+
+ 

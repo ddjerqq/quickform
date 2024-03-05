@@ -1,0 +1,37 @@
+﻿@typeparam TEntity where TEntity : class, new()
+
+<QuickForm @ref="@QuickFormRef" Model="Model"
+           ValidClass="is-valid" InvalidClass="is-invalid"
+           class="d-flex flex-column text-white text-start gap-3 rounded border p-3 bg-dark">
+    <ChildContent>
+        <div class="d-flex flex-column">
+            <label for="@context.EditorId" class="fw-bold">
+                @context.DisplayName
+            </label>
+
+            @context.InputComponent("form-control border border-2 border-secondary p-1")
+
+            @if (!string.IsNullOrEmpty(context.Description))
+            {
+                <span class="text-secondary">
+                    @context.Description
+                </span>
+            }
+
+            @if (!string.IsNullOrEmpty(context.ValidFeedback))
+            {
+                <span class="valid-feedback text-start text-success fw-bold">
+                    @context.ValidFeedback
+                </span>
+            }
+
+            @context.ValidationMessages("invalid-feedback text-start text-danger fw-bold")
+        </div>
+    </ChildContent>
+
+    <SubmitButtonTemplate>
+        <button type="submit" class="btn btn-outline-success text-success fw-bold py-2 px-4 rounded">
+            Login
+        </button>
+    </SubmitButtonTemplate>
+</QuickForm>

@@ -1,0 +1,34 @@
+﻿name: Publish docs to gh-pages
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-publish-docs:
+    concurrency: ci-${{ github.ref }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4.0.0
+
+      - name: Setup Python 🐍
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Load Cache 📦
+        uses: actions/cache@v2
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+
+      - name: Install Python mkdocs-material 🐍
+        run: pip install mkdocs-material
+
+      - name: Build and deploy to gh pages 🏗️
+        run: mkdocs gh-deploy --force

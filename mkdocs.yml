@@ -1,0 +1,83 @@
+site_name: QuickForm
+copyright: | 
+  &copy; 2024 <a href="https://github.com/ddjerqq" target="_blank" rel="noopener">ddjerqq</a>
+repo_name: "ddjerqq/quickform"
+repo_url: "https://github.com/ddjerqq/quickform"
+site_dir: dist
+site_author: "ddjerqq"
+site_url: "https://ddjerqq.github.io/quickform"
+site_description: "QuickForm is a simple and powerful form builder for blazor developers."
+
+nav:
+  - Introduction: index.md
+  - Getting started: getting-started.md
+  - Customization: customization.md
+  - Validation: validation.md
+  - Attributes: attributes.md
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - content.tooltips
+
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: switch to dark mode
+      primary: indigo
+      accent: deep purple
+
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: switch to light mode
+      primary: indigo
+      accent: deep purple
+
+markdown_extensions:
+  - admonition
+  - footnotes
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.tilde
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+
+extra:
+  social:
+    - type: github
+      icon: fontawesome/brands/github-alt
+      link: https://github.com/ddjerqq
+
+    - type: linkedin
+      icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/giorgi-torvalds-4a4a30285/
+
+    - type: telegram
+      icon: fontawesome/brands/telegram
+      link: https://t.me/tenxdeveloper

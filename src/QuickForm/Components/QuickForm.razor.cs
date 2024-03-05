@@ -85,7 +85,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Gets or sets the <see cref="CustomValidationCssClassProvider"/> that is used to determine the CSS class,
     /// for valid and invalid fields.
     /// </summary>
-    protected CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = default!;
+    private CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the &lt;see cref="EditContext"/&gt; instance explicitly associated with this model

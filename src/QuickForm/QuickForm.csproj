@@ -37,15 +37,11 @@
 
     <ItemGroup>
         <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="\"/>
-        <None Include="$(SolutionDir)assets\quickform-icon.png" Pack="true" PackagePath="\"/>
+        <None Include="$(SolutionDir)docs\images\quickform-icon.png" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
         <SupportedPlatform Include="browser"/>
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>
