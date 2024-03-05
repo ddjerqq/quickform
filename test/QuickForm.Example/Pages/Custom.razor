@@ -1,38 +1,6 @@
 ﻿@page "/custom"
 
-<QuickForm Model="Model" class="flex flex-col text-white text-start gap-3 w-1/4">
-    <ChildContent>
-        <div class="flex flex-col gap-1">
-            <label for="@context.EditorId" class="font-semibold">
-                @context.DisplayName
-            </label>
-
-            @context.InputComponent("peer rounded-md border-2 bg-gray-100 text-black border-gray-300 dark:border-white p-1")
-
-            @if (!string.IsNullOrEmpty(context.Description))
-            {
-                <span class="font-sm text-gray-500">
-                    @context.Description
-                </span>
-            }
-
-            @if (!string.IsNullOrEmpty(context.ValidFeedback))
-            {
-                <span class="hidden peer-[.valid]:block text-sm text-start text-green-700 font-bold">
-                    @context.ValidFeedback
-                </span>
-            }
-
-            @context.ValidationMessages("hidden peer-[.invalid]:block text-start text-sm text-red-700 font-bold")
-        </div>
-    </ChildContent>
-
-    <SubmitButtonTemplate>
-        <button type="submit" class="border border-green-500 text-green-500 hover:bg-gray-900 hover:border-green-600 hover:text-green-600 font-bold py-2 px-4 rounded">
-            Login
-        </button>
-    </SubmitButtonTemplate>
-</QuickForm>
+<CustomForm Model="Model"/>
 
 @code
 {

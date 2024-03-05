@@ -26,7 +26,7 @@ public class RegisterCommand
     [Placeholder]
     [DisplayName("Email Address")]
     [EmailAddress]
-    [ValidMessage("Looks good!")]
+    [ValidFeedback("Looks good!")]
     [Description("We will never share your email with anyone")]
     public string EmailAddress { get; set; } = string.Empty;
 

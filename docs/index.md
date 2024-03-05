@@ -79,4 +79,6 @@ But with time, it quickly grew into a passionate project which I believe will sa
 Big thanks to [Anton Toshik](https://www.youtube.com/@RawCoding "The man, the legend behind Raw Coding"), 
 for inspiration about Expressions and Reflection.
 
+[blazor-university](https://blazor-university.com/templating-components-with-renderfragements/) best place to learn blazor! 
+
 And thank **you**, for using QuickForm! 💗

@@ -68,7 +68,7 @@ internal static class PropertyInfoExtensions
 
     internal static string? ValidFeedbackText(this PropertyInfo prop)
     {
-        if (prop.GetCustomAttribute<ValidMessageAttribute>() is not { Message: var message })
+        if (prop.GetCustomAttribute<ValidFeedbackAttribute>() is not { Message: var message })
             return null;
 
         return message;

@@ -1,12 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components.Forms
 @using Blazored.FluentValidation
-@using QuickForm.Common
 
 @typeparam TEntity where TEntity : class, new()
 
 <EditForm EditContext="EditContext"
           OnSubmit="@OnSubmit" OnInvalidSubmit="@OnInvalidSubmit" OnValidSubmit="@OnValidSubmit"
-          AdditionalAttributes="AdditionalAttributes">
+          AdditionalAttributes="AdditionalAttributes?.AsReadOnly()">
     <DataAnnotationsValidator/>
     <FluentValidationValidator/>
 

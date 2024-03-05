@@ -1,10 +1,17 @@
 ﻿@typeparam TEntity where TEntity : class, new()
+@inherits QuickForm<TEntity>
 
-<QuickForm @ref="@QuickFormRef" Model="Model"
-           ValidClass="is-valid" InvalidClass="is-invalid"
-           class="d-flex flex-column text-white text-start gap-3 rounded border p-3 bg-dark">
-    <ChildContent>
-        <div class="d-flex flex-column">
+@{
+    AdditionalAttributes ??= new Dictionary<string, object>
+    {
+        {
+            "class",
+            "d-flex flex-column text-white text-start gap-3 rounded border p-3 bg-dark"
+        }
+    };
+
+    ChildContent = context =>
+        @<div class="d-flex flex-column">
             <label for="@context.EditorId" class="fw-bold">
                 @context.DisplayName
             </label>
@@ -26,12 +33,14 @@
             }
 
             @context.ValidationMessages("invalid-feedback text-start text-danger fw-bold")
-        </div>
-    </ChildContent>
+    </div>;
 
-    <SubmitButtonTemplate>
-        <button type="submit" class="btn btn-outline-success text-success fw-bold py-2 px-4 rounded">
-            Login
-        </button>
-    </SubmitButtonTemplate>
-</QuickForm>
+    SubmitButtonTemplate =
+        @<button type="submit" class="btn btn-outline-success text-success fw-bold py-2 px-4 rounded">
+            submit
+        </button>;
+}
+
+@{
+    base.BuildRenderTree(__builder);
+}

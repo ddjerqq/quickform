@@ -1,0 +1,35 @@
+﻿@typeparam TEntity where TEntity : class, new()
+@inherits QuickForm<TEntity>
+
+@{
+    AdditionalAttributes ??= new Dictionary<string, object>();
+    AdditionalAttributes.Add("class", "flex flex-col");
+
+    ChildContent = context =>
+        @<div class="flex flex-col">
+            <label for="@context.EditorId">
+                @context.DisplayName
+            </label>
+
+            @context.InputComponent("peer")
+
+            <span class="text-gray-500">
+                @context.Description
+            </span>
+
+            <span class="hidden peer-[.valid]:block text-green-700">
+                @context.ValidFeedback
+            </span>
+
+            @context.ValidationMessages("hidden peer-[.invalid]:block text-red-700")
+    </div>;
+
+    SubmitButtonTemplate =
+        @<button type="submit" class="border border-green-500 text-green-500">
+            submit
+        </button>;
+}
+
+@{
+    base.BuildRenderTree(__builder);
+}

@@ -96,7 +96,7 @@ public class Person
 
 ---
 
-# Create the form
+## Create the form
 
 === "Tailwind"
 
@@ -135,7 +135,7 @@ public class Person
 ---
 
 
-# Congratulations!
+## Congratulations!
 
 You now have a fully functional form with validation and submit handling.
 
@@ -147,10 +147,10 @@ You now have a fully functional form with validation and submit handling.
 
     ![The generated form](images/bs-user.png){ loading=lazy }
 
-
 ---
 
-# Next steps
+
+## Next steps
 
 <div class="grid cards" markdown>
 

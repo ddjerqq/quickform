@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using QuickForm.Common;
 
 namespace QuickForm.Components;
@@ -33,8 +32,8 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// <summary>
     /// Gets or sets the template for the fields in this form.
     /// </summary>
-    [Parameter, EditorRequired]
-    public RenderFragment<IQuickFormField> ChildContent { get; set; } = default!;
+    [Parameter]
+    public virtual RenderFragment<IQuickFormField> ChildContent { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the submit button template of the form.
@@ -43,7 +42,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Make sure to give this button `type="submit"` to make it work.
     /// </note>
     [Parameter]
-    public RenderFragment? SubmitButtonTemplate { get; set; }
+    public virtual RenderFragment? SubmitButtonTemplate { get; set; }
 
     /// <summary>
     /// Gets or sets the callback to be invoked when the model changes.
@@ -79,13 +78,11 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Gets or sets a collection of additional attributes that will be applied to the created <c>form</c> element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    /// <summary>
-    /// Gets or sets the <see cref="CustomValidationCssClassProvider"/> that is used to determine the CSS class,
-    /// for valid and invalid fields.
-    /// </summary>
     private CustomValidationCssClassProvider ValidationCssClassProvider { get; set; } = default!;
+
+    private List<QuickFormField<TEntity>> Fields { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the &lt;see cref="EditContext"/&gt; instance explicitly associated with this model
@@ -93,8 +90,6 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     protected EditContext? EditContext { get; set; }
 
     internal string BaseEditorId { get; } = Guid.NewGuid().ToString()[..8];
-
-    internal List<QuickFormField<TEntity>> Fields { get; set; } = new();
 
     /// <inheritdoc />
     protected override void OnParametersSet()
