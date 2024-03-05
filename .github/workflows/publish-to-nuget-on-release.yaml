@@ -28,6 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
 
+    permissions:
+      packages: write
+
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4.0.0
