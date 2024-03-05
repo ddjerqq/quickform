@@ -25,3 +25,5 @@ I created this library to solve my own problems, to solve my own time.
 But with time, it quickly grew into a passionate project which I believe will save a lot of dev-hours for a lot of web developers.
 
 ---
+
+[![read the docs](docs/images/readthedocs.png)](https://ddjerqq.github.io/quickform)
