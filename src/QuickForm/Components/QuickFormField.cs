@@ -109,7 +109,7 @@ internal sealed class QuickFormField<TEntity> : IQuickFormField
         }
     }
 
-    protected QuickFormField(QuickForm<TEntity> form, PropertyInfo propertyInfo)
+    private QuickFormField(QuickForm<TEntity> form, PropertyInfo propertyInfo)
     {
         _form = form;
         PropertyInfo = propertyInfo;
