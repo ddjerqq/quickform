@@ -30,10 +30,22 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     public string InvalidClass { get; set; } = "invalid";
 
     /// <summary>
+    /// Gets or sets the flag to enable or disable data annotations validation.
+    /// </summary>
+    [Parameter]
+    public bool EnableDataAnnotationsValidation { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the flag to enable or disable fluent validation.
+    /// </summary>
+    [Parameter]
+    public bool EnableFluentValidation { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the template for the fields in this form.
     /// </summary>
     [Parameter]
-    public virtual RenderFragment<IQuickFormField> ChildContent { get; set; } = _ => builder =>
+    public RenderFragment<IQuickFormField> ChildContent { get; set; } = _ => builder =>
     {
         builder.OpenElement(0, "div");
         builder.AddContent(1, "You must provide ChildContent unless you are using a custom form template.");
@@ -47,7 +59,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Make sure to give this button `type="submit"` to make it work.
     /// </note>
     [Parameter]
-    public virtual RenderFragment? SubmitButtonTemplate { get; set; }
+    public RenderFragment? SubmitButtonTemplate { get; set; }
 
     /// <summary>
     /// Gets or sets the callback to be invoked when the model changes.

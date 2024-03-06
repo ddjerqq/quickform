@@ -6,8 +6,15 @@
 <EditForm EditContext="EditContext"
           OnSubmit="@OnSubmit" OnInvalidSubmit="@OnInvalidSubmit" OnValidSubmit="@OnValidSubmit"
           AdditionalAttributes="@(AdditionalAttributes as IReadOnlyDictionary<string, object>)">
-    <DataAnnotationsValidator/>
-    <FluentValidationValidator/>
+    @if (EnableDataAnnotationsValidation)
+    {
+        <DataAnnotationsValidator/>
+    }
+
+    @if (EnableFluentValidation)
+    {
+        <FluentValidationValidator/>
+    }
 
     @foreach (var field in Fields)
     {

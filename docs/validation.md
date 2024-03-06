@@ -5,6 +5,8 @@ QuickForm has two types of validation
 - `DataAnnotationsValidator`
 - [`Blazored.FluentValidationValidator`](https://github.com/Blazored/FluentValidation)
 
+Both of which can be disabled with setting `EnableDataAnnotationsValidation` and `EnableFluentValidation` parameters to false.
+
 ## DataAnnotationAttributes
 
 ```csharp
