@@ -2,16 +2,16 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using QuickForm.Common;
+using QuickForm.Internal;
 
 namespace QuickForm.Components;
 
-internal class QuickFormField<TEntity> : IQuickFormField
+internal sealed class QuickFormField<TEntity> : IQuickFormField
     where TEntity : class, new()
 {
-    protected readonly QuickForm<TEntity> Form;
+    private readonly QuickForm<TEntity> _form;
 
-    public string EditorId => $"{Form.BaseEditorId}_{PropertyInfo.Name}";
+    public string EditorId => $"{_form.BaseEditorId}_{PropertyInfo.Name}";
 
     public string DisplayName => PropertyInfo.DisplayName();
 
@@ -111,13 +111,13 @@ internal class QuickFormField<TEntity> : IQuickFormField
 
     protected QuickFormField(QuickForm<TEntity> form, PropertyInfo propertyInfo)
     {
-        Form = form;
+        _form = form;
         PropertyInfo = propertyInfo;
     }
 
     internal event EventHandler? ValueChanged;
 
-    internal TEntity? Owner => Form.Model;
+    internal TEntity? Owner => _form.Model;
 
     internal object? Value
     {

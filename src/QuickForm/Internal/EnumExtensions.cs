@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace QuickForm.Common;
+namespace QuickForm.Internal;
 
 internal static class EnumExtensions
 {

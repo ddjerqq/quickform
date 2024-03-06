@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using QuickForm.Attributes;
 using QuickForm.Components;
 
-namespace QuickForm.Common;
+namespace QuickForm.Internal;
 
 internal static class PropertyInfoExtensions
 {

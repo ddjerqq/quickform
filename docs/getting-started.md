@@ -6,7 +6,7 @@ title: Getting started
 
 ## Add the package
 
-You can use the `dotnet add` command to install QuickForm to your project.
+You can use the `dotnet add` to add the QuickForm package to your project.
 
 ```bash
 dotnet add package QuickForm
@@ -16,10 +16,21 @@ dotnet add package QuickForm
 
 ## Import the namespace
 
-In your `_Imports.razor` file, or your component file, import the QuickForm library with `@using QuickForm.Components`
+Import the `QuickForm.Components` namespace in your `_Imports.razor` or component / page file.
 
-```csharp title="_Imports.razor"
+!!! info "Importing namespaces for customization"
+
+    If you plan to [customize](../customization) the form, you will also need to import the following namespaces
+
+    - `QuickForm.Attributes`
+    - `System.ComponentModel`
+    - `System.ComponentModel.DataAnnotations` 
+
+``` csharp title="_Imports.razor"
 @using QuickForm.Components
+@using QuickForm.Attributes
+@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
 ```
 
 ---
@@ -28,19 +39,20 @@ In your `_Imports.razor` file, or your component file, import the QuickForm libr
 
 QuickForm comes with two default implementations to get you started:
 
-- `TwQuickForm<TEntity>` - A form component that uses TailwindCSS classes for styling
-- `BsQuickForm<TEntity>` - A form component that uses Bootstrap classes for styling
+- `TwQuickForm<TEntity>` - A form component that uses **TailwindCSS** classes for styling
+- `BsQuickForm<TEntity>` - A form component that uses **Bootstrap** classes for styling
 
 !!! info "Customization"
 
     if you wish to customize the form to suit your own needs, see [Customization](../customization)
 
-??? example "Preview of the components"
+???+ example "Preview of the components"
 
-    This is what the components could look like, depending on the one you choose.
-    The tailwind version has dark mode support along hover effects.
+    This is what the components **could** look like, depending on the one you choose.
 
-    Keep in mind you can always [customize](../customization) the components to tailor your specific needs.
+    The tailwind version has dark mode support and hover effects.
+
+    Keep in mind you can always [customize](../customization) and create a custom form, for your specific needs.
     
     === "Tailwind"
 
@@ -66,14 +78,12 @@ public class Person
 
 ## Decorate your model
 
-!!! info "This is optional"
-
 Here are some of the most common and basic attributes you can use to customize and flavor the generated form
 
 - `[Required]` - Marks a property as required
-- `[DisplayName]` - Changes the display name of a property
-- `[Description]` - Adds a description to the input
-- `[Placeholder]` - Adds a placeholder to the input
+- `[DisplayName]` - Changes the display name of a property - **label text**
+- `[Description]` - Adds a description to the input - **text below the input**
+- `[Placeholder]` - Adds a placeholder to the input - **text inside the input**
 - `[Range]` - Adds a range validation to the input
 
 ```csharp

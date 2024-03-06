@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using QuickForm.Components;
 
-namespace QuickForm.Common;
+namespace QuickForm.Internal;
 
 internal record InputComponentExpressionContainer(LambdaExpression ValueExpression, object? ValueChanged)
 {

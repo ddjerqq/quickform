@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
-using QuickForm.Common;
+using QuickForm.Internal;
 
 namespace QuickForm.Components;
 

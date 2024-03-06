@@ -3,7 +3,7 @@
 
 @{
     AdditionalAttributes ??= new Dictionary<string, object>();
-    AdditionalAttributes.Add("class", "d-flex flex-column text-white text-start gap-3 rounded border p-3 bg-dark");
+    AdditionalAttributes.Add("class", "d-flex flex-column text-white text-start gap-3 rounded border p-3");
 
     ChildContent = context =>
         @<div class="d-flex flex-column">
@@ -11,7 +11,7 @@
                 @context.DisplayName
             </label>
 
-            @context.InputComponent("form-control border border-2 border-secondary p-1")
+            @context.InputComponent("form-control border border-secondary p-1")
 
             @if (!string.IsNullOrEmpty(context.Description))
             {
@@ -32,10 +32,19 @@
 
     SubmitButtonTemplate =
         @<button type="submit" class="btn btn-outline-success text-success fw-bold py-2 px-4 rounded">
-            submit
+            @SubmitButtonText
         </button>;
 }
 
 @{
     base.BuildRenderTree(__builder);
+}
+
+@code
+{
+    /// <summary>
+    /// The text to display on the submit button.
+    /// </summary>
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Submit";
 }

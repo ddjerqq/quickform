@@ -3,7 +3,8 @@
 
 @{
     AdditionalAttributes ??= new Dictionary<string, object>();
-    AdditionalAttributes.Add("class", "flex flex-col text-white text-start gap-3 rounded-md border border-gray-600 p-3 bg-gray-900");
+    AdditionalAttributes.TryAdd("class", "flex flex-col text-black dark:text-white text-start gap-3");
+    AdditionalAttributes.TryAdd("novalidate", "");
 
     ChildContent = context =>
         @<div class="flex flex-col gap-1">
@@ -11,31 +12,42 @@
                 @context.DisplayName
             </label>
 
-            @context.InputComponent("peer rounded-md border-2 bg-gray-100 text-black border-gray-300 dark:border-white p-1")
+            @context.InputComponent("peer rounded-md border-2 bg-transparent p-1 border-gray-300 dark:border-gray-300")
 
             @if (!string.IsNullOrEmpty(context.Description))
             {
-                <span class="font-sm text-gray-500">
+                <span class="text-sm text-gray-500">
                     @context.Description
                 </span>
             }
 
             @if (!string.IsNullOrEmpty(context.ValidFeedback))
             {
-                <span class="hidden peer-[.valid]:block text-sm text-start text-green-700 font-bold">
+                <span class="hidden peer-[.valid]:block text-sm text-start text-green-700 dark:text-green-500 font-bold">
                     @context.ValidFeedback
                 </span>
             }
 
-            @context.ValidationMessages("hidden peer-[.invalid]:block text-start text-sm text-red-700 font-bold")
+            @context.ValidationMessages("hidden peer-[.invalid]:block text-start text-sm text-red-700 dark:text-red-500 font-bold")
     </div>;
 
     SubmitButtonTemplate =
-        @<button type="submit" class="border border-green-500 text-green-500 hover:bg-gray-900 hover:border-green-600 hover:text-green-600 font-bold py-2 px-4 rounded">
-            submit
+        @<button type="submit"
+                 class="border-2 border-green-700 dark:border-green-500 text-green-700 dark:text-green-500
+                        hover:bg-gray-300 dark:hover:bg-gray-800 font-bold py-2 px-4 rounded">
+            @SubmitButtonText
         </button>;
 }
 
 @{
     base.BuildRenderTree(__builder);
+}
+
+@code
+{
+    /// <summary>
+    /// The text to display on the submit button.
+    /// </summary>
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Submit";
 }

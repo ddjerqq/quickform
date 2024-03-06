@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using QuickForm.Components;
 
-namespace QuickForm.Common;
+namespace QuickForm.Internal;
 
 internal record ValidationMessageExpressionContainer(LambdaExpression Lambda)
 {

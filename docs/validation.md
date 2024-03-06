@@ -3,7 +3,7 @@
 QuickForm has two types of validation
 
 - `DataAnnotationsValidator`
-- `Blazored.FluentValidationValidator`
+- [`Blazored.FluentValidationValidator`](https://github.com/Blazored/FluentValidation)
 
 ## DataAnnotationAttributes
 
@@ -24,23 +24,23 @@ public class User
 ## FluentValidation
 
 ```csharp
-public class ProductCreate
+public class ProductCreateCommand
 {
     public string Name { get; set; }
     
     public decimal Price { get; set; }
 }
 
-public class ProductCreateValidator : AbstractValidator<ProductCreate>
+public class ProductCreateCommandValidator : AbstractValidator<ProductCreateCommand>
 {
-    public ProductCreateValidator(IProductRepository productRepository)
+    public ProductCreateCommandValidator(IProductRepository productRepository)
     {
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithMessage("Name is required")
             .MustAsync(async (name, product, cancellationToken) => {
-                var product = await productRepository.GetByName(name);
-                return product == null;
+                var product = await productRepository.GetByNameAsync(name, cancellationToken);
+                return product is null;
             })
             .WithMessage("Product with this name already exists");
         
@@ -55,4 +55,4 @@ public class ProductCreateValidator : AbstractValidator<ProductCreate>
 !!! info
 
     These validation rules will be automatically applied to your form, 
-    and all fields will get validated when they are changed, even asynchronously.
+    all fields will get validated when they are changed.

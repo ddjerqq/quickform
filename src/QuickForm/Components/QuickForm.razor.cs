@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using QuickForm.Common;
+using QuickForm.Internal;
 
 namespace QuickForm.Components;
 
