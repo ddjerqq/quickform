@@ -11,6 +11,12 @@ internal sealed class CustomValidationCssClassProvider : FieldCssClassProvider
 
     private readonly string? _inValidClass;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the class provider should validate all fields,
+    /// regardless of whether they have been modified or not.
+    /// </summary>
+    public bool ValidateAllFields { get; set; }
+
     public CustomValidationCssClassProvider(string? modifiedClass, string? validClass, string? inValidClass)
     {
         _modifiedClass = modifiedClass;
@@ -20,8 +26,8 @@ internal sealed class CustomValidationCssClassProvider : FieldCssClassProvider
 
     public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
     {
-        bool isModified = editContext.IsModified(fieldIdentifier);
-        bool isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
+        var isModified = editContext.IsModified(fieldIdentifier);
+        var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
 
         var sb = new StringBuilder();
 
@@ -31,11 +37,9 @@ internal sealed class CustomValidationCssClassProvider : FieldCssClassProvider
             sb.Append(' ');
         }
 
-        if (isModified)
+        if (isModified || ValidateAllFields)
         {
-            var result = isValid
-                ? _validClass
-                : _inValidClass;
+            var result = isValid ? _validClass : _inValidClass;
 
             if (!string.IsNullOrEmpty(result))
                 sb.Append(result);

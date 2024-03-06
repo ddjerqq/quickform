@@ -33,7 +33,7 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// Gets or sets the template for the fields in this form.
     /// </summary>
     [Parameter]
-    public virtual RenderFragment<IQuickFormField> ChildContent { get; set; } = ctx => builder =>
+    public virtual RenderFragment<IQuickFormField> ChildContent { get; set; } = _ => builder =>
     {
         builder.OpenElement(0, "div");
         builder.AddContent(1, "You must provide ChildContent unless you are using a custom form template.");
@@ -132,9 +132,10 @@ public partial class QuickForm<TEntity> : ComponentBase, IDisposable
     /// <summary>
     /// Invoked when the value of a field changes.
     /// </summary>
-    protected void OnValueChanged(object? sender, EventArgs e)
+    private void OnValueChanged(object? sender, EventArgs e)
     {
         EditContext?.Validate();
+        ValidationCssClassProvider.ValidateAllFields = true;
         InvokeAsync(() => OnModelChanged.InvokeAsync(Model));
     }
 
