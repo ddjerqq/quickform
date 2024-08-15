@@ -1,0 +1,38 @@
+﻿@page "/sumsum"
+@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@using QuickForm.Attributes
+
+<datalist id="room-names">
+    <option value="1">ფიზიო ოთახი</option>
+    <option value="2">აკადემიურის ოთახი პატარა</option>
+    <option value="3">აკადემიურის ოთახი დიდი</option>
+</datalist>
+
+<div class="bg-neutral-600 shadow-xl rounded-md p-4 w-80 flex flex-col gap-3 text-white">
+    <h1 class="text-xl">ოთახის დაჯავშნა</h1>
+
+    <TwQuickForm Model="Model" SubmitButtonText="დამატება" />
+</div>
+
+
+@code
+{
+    public class ReserveRoom
+    {
+        // room name
+        [Required]
+        [Placeholder("აირჩიეთ ოთახი")]
+        [DisplayName("ოთახი")]
+        [DataList("room-names")]
+        public string RoomName { get; set; } = default!;
+
+        [Required]
+        [Placeholder("აირჩიეთ საათი")]
+        [DisplayName("საათი")]
+        [DateType(InputDateType.Time)]
+        public DateTime Hour { get; set; }
+    }
+
+    public ReserveRoom Model { get; set; } = new();
+}

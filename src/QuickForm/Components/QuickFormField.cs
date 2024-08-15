@@ -105,6 +105,11 @@ internal sealed class QuickFormField<TEntity> : IQuickFormField
             if (PropertyInfo.GetHtmlInputType() is { } htmlInputType)
                 attributes["type"] = htmlInputType;
 
+            foreach (var (name, value) in PropertyInfo.GetHtmlAttributes())
+            {
+                attributes[name] = value;
+            }
+
             return attributes!;
         }
     }

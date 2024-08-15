@@ -57,6 +57,11 @@ internal static class PropertyInfoExtensions
         return prop.GetCustomAttribute<DataListAttribute>()?.DataListName;
     }
 
+    internal static IEnumerable<(string Name, object? Value)> GetHtmlAttributes(this PropertyInfo prop)
+    {
+        return prop.GetCustomAttributes<HtmlAttributeAttribute>().Select(attr => (attr.Name, attr.Value));
+    }
+
     internal static string? Placeholder(this PropertyInfo prop)
     {
         if (prop.GetCustomAttribute<PlaceholderAttribute>() is not { } placeholder)
