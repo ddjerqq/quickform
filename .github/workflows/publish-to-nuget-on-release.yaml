@@ -38,11 +38,5 @@ jobs:
       - name: Pack 📦
         run: dotnet pack --configuration Release --output .
 
-      - name: Add Github to NuGet Source 🔑
-        run: dotnet nuget add source --username ddjerqq --password ${{ secrets.NUGET_GITHUB_APIKEY }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ddjerqq/index.json"
-
-      - name: Push to Github 🚀
-        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_GITHUB_APIKEY }} --source "github"
-
       - name: Push to NuGet 🚀
         run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_APIKEY }} --source "https://api.nuget.org/v3/index.json"
