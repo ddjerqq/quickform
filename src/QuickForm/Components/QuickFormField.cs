@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using QuickForm.Attributes;
 using QuickForm.Internal;
 
 namespace QuickForm.Components;
@@ -18,6 +19,8 @@ internal sealed class QuickFormField<TEntity> : IQuickFormField
     public string? Description => PropertyInfo.Description();
 
     public string? ValidFeedback => PropertyInfo.ValidFeedbackText();
+
+    public bool IsHidden => PropertyInfo.GetCustomAttribute<HiddenAttribute>() is not null;
 
     public RenderFragment<string> InputComponent
     {
@@ -142,6 +145,7 @@ internal sealed class QuickFormField<TEntity> : IQuickFormField
         return typeof(TEntity)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
             .Where(prop => prop.GetCustomAttribute<NotMappedAttribute>() is null)
+            .Where(prop => prop.GetCustomAttribute<IgnoreAttribute>() is null)
             .Select(prop => new QuickFormField<TEntity>(form, prop));
     }
 }

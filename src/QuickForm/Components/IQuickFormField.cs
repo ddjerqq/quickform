@@ -42,4 +42,12 @@ public interface IQuickFormField
     /// the string parameter is the class to be applied to the input element.
     /// </note>
     public RenderFragment<string> ValidationMessages { get; }
+
+    /// <summary>
+    /// Gets if the input together with its label and everything else should be hidden.
+    /// </summary>
+    /// <note>
+    /// The input element will still be rendered, but it will be hidden.
+    /// </note>
+    public bool IsHidden { get; }
 }
