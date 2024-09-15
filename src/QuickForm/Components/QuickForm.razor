@@ -18,7 +18,16 @@
 
     @foreach (var field in Fields)
     {
-        @ChildContent(field)
+        if (field.IsHidden)
+        {
+            <div style="display:none">
+                @ChildContent(field)
+            </div>
+        }
+        else
+        {
+            @ChildContent(field)
+        }
     }
 
     @if (SubmitButtonTemplate is not null)
